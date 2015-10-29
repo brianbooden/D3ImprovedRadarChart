@@ -5,22 +5,26 @@
 /////////// Inspired by the code of alangrafu ///////////
 /////////////////////////////////////////////////////////
 	
-function RadarChart(id, data, options, $element, layout) {
+function RadarChart(id, json, options, $element, layout) {
 	var cfg = {
-	 w: 600,				//Width of the circle
-	 h: 600,				//Height of the circle
-	 margin: {top: 20, right: 20, bottom: 20, left: 20}, //The margins around the circle
-	 levels: 3,				//How many levels or inner circles should there be drawn
-	 maxValue: 0, 				//What is the value that the biggest circle will represent
-	 labelFactor: 1.25, 			//How much farther than the radius of the outer circle should the labels be placed
-	 wrapWidth: 60, 			//The number of pixels after which a label needs to be given a new line
-	 opacityArea: 0.35, 			//The opacity of the area of the blob
-	 dotRadius: 4, 				//The size of the colored circles of each blog
-	 opacityCircles: 0.1, 			//The opacity of the circles of each blob
-	 strokeWidth: 2, 			//The width of the stroke around each blob
-	 roundStrokes: false,			//If true the area and stroke will follow a round path (cardinal-closed)
-	 color: d3.scale.category10()		//Color function
+	 w: 600,																//Width of the circle
+	 h: 600,																//Height of the circle
+	 margin: {top: 100, right: 100, bottom: 100, left: 100}, 				//The margins around the circle
+	 levels: 3,																//How many levels or inner circles should there be drawn
+	 maxValue: 0, 															//What is the value that the biggest circle will represent
+	 labelFactor: 1.25, 													//How much farther than the radius of the outer circle should the labels be placed
+	 wrapWidth: 60, 														//The number of pixels after which a label needs to be given a new line
+	 opacityArea: 0.35, 													//The opacity of the area of the blob
+	 dotRadius: 4, 															//The size of the colored circles of each blog
+	 opacityCircles: 0.1, 													//The opacity of the circles of each blob
+	 strokeWidth: 2, 														//The width of the stroke around each blob
+	 roundStrokes: false,													//If true the area and stroke will follow a round path (cardinal-closed)
+	 color: d3.scale.category10()											//Color function
 	};
+
+	//Convert the nested data passed in
+	//into an array of values arrays
+	var data = json.map(function(d) { return d.definition });
 	
 	console.log(data);
 	
@@ -34,11 +38,11 @@ function RadarChart(id, data, options, $element, layout) {
 	//If the supplied maxValue is smaller than the actual one, replace by the max in the data
 	var maxValue = Math.max(cfg.maxValue, d3.max(data, function(i){return d3.max(i.map(function(o){return o.value;}))}));
 		
-	var allAxis = (data[0].map(function(i, j){return i.axis})),	//Names of each axis
-		total = allAxis.length,					//The number of different axes
-		radius = Math.min(cfg.w/2, cfg.h/2), 			//Radius of the outermost circle
-		Format = d3.format('%'),			 	//Percentage formatting
-		angleSlice = Math.PI * 2 / total;			//The width in radians of each "slice"
+	var allAxis = (data[0].map(function(i, j){return i.axis})),				//Names of each axis
+		total = allAxis.length,												//The number of different axes
+		radius = Math.min(cfg.w/2, cfg.h/2), 								//Radius of the outermost circle
+		Format = d3.format('%'),			 								//Percentage formatting
+		angleSlice = Math.PI * 2 / total;									//The width in radians of each "slice"
 	
 	//Scale for the radius
 	var rScale = d3.scale.linear()
@@ -138,8 +142,8 @@ function RadarChart(id, data, options, $element, layout) {
 	axis.append("line")
 		.attr("x1", 0)
 		.attr("y1", 0)
-		.attr("x2", function(d, i){ return rScale(maxValue*1.1) * Math.cos(angleSlice*i); })
-		.attr("y2", function(d, i){ return rScale(maxValue*1.1) * Math.sin(angleSlice*i); })
+		.attr("x2", function(d, i){ return rScale(maxValue*1.1) * Math.cos(angleSlice*i - Math.PI/2); })
+		.attr("y2", function(d, i){ return rScale(maxValue*1.1) * Math.sin(angleSlice*i - Math.PI/2); })
 		.attr("class", "line")
 		.style("stroke", "white")
 		.style("stroke-width", "2px");
