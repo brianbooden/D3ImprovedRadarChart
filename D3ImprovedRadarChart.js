@@ -1,55 +1,55 @@
-define(["jquery", "./d3.min", "text!./D3ImprovedRadarChart.css","./radarChart"],
+define(["jquery", "./d3.min", "./d3-legends", "text!./D3ImprovedRadarChart.css","./radarChart"],
 function ( ) {
 
 	return {
+		initialProperties: {
+			qHyperCubeDef: {
+				qDimensions: [],
+				qMeasures: [],
+				qInitialDataFetch: [{
+					qWidth: 10,
+					qHeight: 50
+				}]
+			}
+		},
+		definition: {
+			type: "items",
+			component: "accordion",
+			items: {
+				dimensions: {
+					uses: "dimensions",
+					min: 1
+				},
+				measures: {
+					uses: "measures",
+					min: 0
+				},
+				sorting: {
+					uses: "sorting"
+				}
+			}
+		},
+		snapshot: {
+			canTakeSnapshot: true
+		},
 		paint: function ($element, layout) {
-			////////////////////////////////////////////////////////////// 
+
+		////////////////////////////////////////////////////////////// 
 			//////////////////////// Set-Up ////////////////////////////// 
 			////////////////////////////////////////////////////////////// 
-
-			//var margin = {top: 100, right: 100, bottom: 100, left: 100},
-			//	width = $element.width(),
-			//	height = $element.height();
-			
+		
 			// Set the margins of the object
-			var margin = {top: 50, right: 50, bottom: 100, left: 50},
+			var margin = {top: 100, right: 100, bottom: 100, left: 100},
 				width = $element.width(),
 				height = $element.height();
 							
 			////////////////////////////////////////////////////////////// 
 			////////////////////////// Data ////////////////////////////// 
 			////////////////////////////////////////////////////////////// 
+								
+			var json = getJSONtoHyperCube(layout);
 
-			var data = [
-					  [//iPhone
-						{axis:"Battery Life",value:0.22},
-						{axis:"Brand",value:0.5},
-						{axis:"Contract Cost",value:0.4},
-						{axis:"Design And Quality",value:0.17},
-						{axis:"Have Internet Connectivity",value:0.22},
-						{axis:"Large Screen",value:0.02},
-						{axis:"Price Of Device",value:0.21},
-						{axis:"Be A Smart phone",value:0.50}			
-					  ],[//Samsung
-						{axis:"Battery Life",value:0.27},
-						{axis:"Brand",value:0.36},
-						{axis:"Contract Cost",value:0.35},
-						{axis:"Design And Quality",value:0.48},
-						{axis:"Have Internet Connectivity",value:0.20},
-						{axis:"Large Screen",value:0.28},
-						{axis:"Price Of Device",value:0.35},
-						{axis:"Be A Smart phone",value:0.38}
-					  ],[//Nokia Smartphone
-						{axis:"Battery Life",value:0.26},
-						{axis:"Brand",value:0.10},
-						{axis:"Contract Cost",value:0.30},
-						{axis:"Design And Quality",value:0.3},
-						{axis:"Have Internet Connectivity",value:0.45},
-						{axis:"Large Screen",value:0.04},
-						{axis:"Price Of Device",value:0.41},
-						{axis:"Be A Smart phone",value:0.30}
-					  ]
-					];
+			
 			////////////////////////////////////////////////////////////// 
 			//////////////////// Draw the Chart ////////////////////////// 
 			////////////////////////////////////////////////////////////// 
@@ -67,10 +67,102 @@ function ( ) {
 			  color: color,
 			  labelFactor: 1.28
 			};
-			//Call function to draw the Radar chart
-			RadarChart(".radarChart", data, radarChartOptions, $element, layout);
+		
+			$element.html(JSON.stringify(json));
+			
+			RadarChart(".radarChart", json, radarChartOptions, $element, layout);
 		}
 	};
 
 } );
 
+
+
+function getJSONtoHyperCube(layout) {
+
+	// get qMatrix data array
+	var qMatrix = layout.qHyperCube.qDataPages[0].qMatrix;
+
+	// create a new array that contains the measure labels
+	var dimensions = layout.qHyperCube.qDimensionInfo;			
+	var LegendTitle = dimensions[0].qFallbackTitle;			
+	
+	// create a new array that contains the dimensions and metric values
+	// depending on whether if 1 or 2 dimensions are being used
+	if(dimensions.length==2){			 
+		var dim1Labels = qMatrix.map(function(d) {
+			 return d[0].qText;
+		 });
+		 var dim1Id = qMatrix.map(function(d) {
+			 return d[0].qElemNumber;
+		 });
+		 var dim2Labels = qMatrix.map(function(d) {
+			 return d[1].qText;
+		 });
+		 var dim2Id = qMatrix.map(function(d) {
+			 return d[1].qElemNumber;
+		 });
+		 var metric1Values = qMatrix.map(function(d) {
+				 return d[2].qNum;
+		 }) ;	 
+	}
+	else{				
+		var dim1Labels = qMatrix.map(function(d) {
+			 return d[0].qText;
+		 });				 
+		 var dim1Id = qMatrix.map(function(d) {
+			 return d[0].qElemNumber;
+		 });
+		 var dim2Labels = dim1Labels;
+		 var dim2Id = dim1Id;
+		 var metric1Values = qMatrix.map(function(d) {
+			 return d[1].qNum;
+		 });				 		 
+	} 
+	
+	// create a JSON array that contains dimensions and metric values
+	var data = [];
+	var actClassName = "";
+	var myJson = {};
+	myJson.dim_id = ""; 
+	myJson.dim = ""; 
+	myJson.definition = [];
+	var cont = 0;
+	var contdata = 0;
+	var LegendValues = [];								
+	if(dimensions.length==2){
+		for(var k=0;k<dim1Labels.length;k++){				
+			if(actClassName!=dim1Labels[k] ){
+				if(cont!=0){
+					data[contdata] = myJson;
+					contdata++;				
+				}
+				// it is a different grouping value of Dim1
+				LegendValues.push(dim1Labels[k]);
+				var myJson = {};
+				myJson.dim_id = "";
+				myJson.dim = "";
+				myJson.definition = [];							
+				cont = 0;
+				myJson.dim_id = dim1Id[k];	
+				myJson.dim = dim1Labels[k];						
+					myJson.definition[cont]  = {"axis_id" : dim2Id[k], "axis" : dim2Labels[k], "value" : metric1Values[k]};
+					cont++;								
+			}else{						
+					myJson.definition[cont]  = {"axis_id" : dim2Id[k], "axis" : dim2Labels[k], "value" : metric1Values[k]};
+					cont++;
+			}												
+			actClassName =  dim1Labels[k];						
+		}				
+		data[contdata] = myJson;			
+	}else{
+		for(var k=0;k<dim1Labels.length;k++){									
+			// it is a different grouping value of Dim1
+			LegendValues.push(dim1Labels[k]);				
+					myJson.definition[cont]  = {"axis_id" : dim2Id[k], "axis" : dim2Labels[k], "value" : metric1Values[k]};
+					cont++;
+		}	
+		data[contdata] = myJson;
+	}
+	return data;
+}
