@@ -1,4 +1,4 @@
-define(["jquery", "./d3.min", "./d3-legends", "text!./D3ImprovedRadarChart.css","./radarChart"],
+define(["jquery", "./d3.min", "https://cdnjs.cloudflare.com/ajax/libs/d3-legend/1.3.0/d3-legend.js", "text!./D3ImprovedRadarChart.css","./radarChart"],
 function ( ) {
 
 	return {
@@ -18,11 +18,13 @@ function ( ) {
 			items: {
 				dimensions: {
 					uses: "dimensions",
-					min: 1
+					min: 1,
+					max: 2
 				},
 				measures: {
 					uses: "measures",
-					min: 0
+					min: 1,
+					max: 1
 				},
 				sorting: {
 					uses: "sorting"
@@ -39,9 +41,11 @@ function ( ) {
 			////////////////////////////////////////////////////////////// 
 		
 			// Set the margins of the object
-			var margin = {top: 100, right: 100, bottom: 100, left: 100},
+			var margin = {top: 60, right: 0, bottom: 70, left: 70},
 				width = $element.width(),
-				height = $element.height();
+				height = $element.height(),
+				legendPosition = {x: 10, y: 10};
+				
 							
 			////////////////////////////////////////////////////////////// 
 			////////////////////////// Data ////////////////////////////// 
@@ -58,17 +62,22 @@ function ( ) {
 				.range(["#EDC951","#CC333F","#00A0B0"]);
 				
 			var radarChartOptions = {
-			  w: width*0.5,
-			  h: height*0.5,
+			  w: width*0.65,
+			  h: height*0.65,
 			  margin: margin,
 			  maxValue: .6,
 			  levels: 6,
-			  roundStrokes: true,
+			  roundStrokes: false,
 			  color: color,
-			  labelFactor: 1.28
+			  labelFactor: 1.3,
+			  axisName: "Characteristics",
+			  areaName: "radar_area_name",
+			  value: "Value",
+			  legendPosition: legendPosition,
+			  numDimensions: layout.qHyperCube.qDimensionInfo.length
 			};
 		
-			$element.html(JSON.stringify(json));
+			//$element.html(JSON.stringify(json));
 			
 			RadarChart(".radarChart", json, radarChartOptions, $element, layout);
 		}
@@ -145,11 +154,13 @@ function getJSONtoHyperCube(layout) {
 				myJson.definition = [];							
 				cont = 0;
 				myJson.dim_id = dim1Id[k];	
-				myJson.dim = dim1Labels[k];						
-					myJson.definition[cont]  = {"axis_id" : dim2Id[k], "axis" : dim2Labels[k], "value" : metric1Values[k]};
-					cont++;								
+				myJson.dim = dim1Labels[k];	
+					// Make sure radar_area_name is added for usage in the radar chart layers later
+					myJson.definition[cont]  = {"axis_id" : dim2Id[k], "axis" : dim2Labels[k], "value" : metric1Values[k], "radar_area_name" : dim1Labels[k]};
+					cont++;		
+					// Make sure radar_area_name is added for usage in the radar chart layers later
 			}else{						
-					myJson.definition[cont]  = {"axis_id" : dim2Id[k], "axis" : dim2Labels[k], "value" : metric1Values[k]};
+					myJson.definition[cont]  = {"axis_id" : dim2Id[k], "axis" : dim2Labels[k], "value" : metric1Values[k], "radar_area_name" : dim1Labels[k]};
 					cont++;
 			}												
 			actClassName =  dim1Labels[k];						
@@ -158,8 +169,9 @@ function getJSONtoHyperCube(layout) {
 	}else{
 		for(var k=0;k<dim1Labels.length;k++){									
 			// it is a different grouping value of Dim1
-			LegendValues.push(dim1Labels[k]);				
-					myJson.definition[cont]  = {"axis_id" : dim2Id[k], "axis" : dim2Labels[k], "value" : metric1Values[k]};
+			LegendValues.push(dim1Labels[k]);	
+					// Make sure radar_area_name is added for usage in the radar chart layers later
+					myJson.definition[cont]  = {"axis_id" : dim2Id[k], "axis" : dim2Labels[k], "value" : metric1Values[k], "radar_area_name" : "Default"};
 					cont++;
 		}	
 		data[contdata] = myJson;
