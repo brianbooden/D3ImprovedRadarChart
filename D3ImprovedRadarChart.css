@@ -16,3 +16,9 @@
 .qv-object-D3ImprovedRadarChart .tooltip {
 	fill: #333333;
 }
+
+.qv-object-D3ImprovedRadarChart .legendOrdinal {
+	font-family: 'Open Sans', sans-serif;
+	font-size: 34px;
+	font-weight: 300;
+}
