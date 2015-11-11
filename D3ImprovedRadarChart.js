@@ -36,55 +36,44 @@ function ( ) {
 		},
 		paint: function ($element, layout) {
 
-		////////////////////////////////////////////////////////////// 
-			//////////////////////// Set-Up ////////////////////////////// 
 			////////////////////////////////////////////////////////////// 
-		
-			// Set the margins of the object
-			var margin = {top: 60, right: 0, bottom: 70, left: 70},
-				width = $element.width(),
-				height = $element.height(),
-				legendPosition = {x: 10, y: 10};
-				
-							
+			////////////////////// Set-Up display //////////////////////// 
+			////////////////////////////////////////////////////////////// 
+
+			var color = d3.scale.ordinal()
+				.range(["#EDC951","#CC333F","#00A0B0"]);
+
+			var radarChartOptions = {
+				size: {width: $element.width(), height: $element.height()},									//Width and Height of the circle
+				margin: {top: 50, right: 50, bottom: 50, left: 50},											//The margins around the circle
+				legendPosition: {x: 40, y: 40},																//The position of the legend, from the top-left corner of the svg
+				color: color,																				//Color function
+				colorOpacity: {circle: 0.1, area: 0.2, area_out: 0.1, area_over: 0.6, area_click: 0.8},		//The opacity of the area of the blob
+				roundStrokes: true,																			//If true the area and stroke will follow a round path (cardinal-closed)		
+				maxValue: .6,																				//What is the value that the biggest circle will represent
+				levels: 6,																					//How many levels or inner circles should there be drawn
+				dotRadius: 4, 																				//The size of the colored circles of each blob
+				labelFactor: 1.13, 																			//How much farther than the radius of the outer circle should the labels be placed
+				wrapWidth: 100, 																			//The number of pixels after which a label needs to be given a new line
+				strokeWidth: 2.8 																			//The width of the stroke around each blob
+			};
+			
 			////////////////////////////////////////////////////////////// 
 			////////////////////////// Data ////////////////////////////// 
 			////////////////////////////////////////////////////////////// 
 								
 			var json = getJSONtoHyperCube(layout);
-
 			
 			////////////////////////////////////////////////////////////// 
 			//////////////////// Draw the Chart ////////////////////////// 
-			////////////////////////////////////////////////////////////// 
+			////////////////////////////////////////////////////////////// 		
 
-			var color = d3.scale.ordinal()
-				.range(["#EDC951","#CC333F","#00A0B0"]);
-				
-			var radarChartOptions = {
-			  w: width*0.65,
-			  h: height*0.65,
-			  margin: margin,
-			  maxValue: .6,
-			  levels: 6,
-			  roundStrokes: false,
-			  color: color,
-			  labelFactor: 1.3,
-			  axisName: "Characteristics",
-			  areaName: "radar_area_name",
-			  value: "Value",
-			  legendPosition: legendPosition,
-			  numDimensions: layout.qHyperCube.qDimensionInfo.length
-			};
-		
 			//$element.html(JSON.stringify(json));
 			
-			RadarChart(".radarChart", json, radarChartOptions, $element, layout);
+			RadarChart(".radarChart", json, radarChartOptions, this, $element, layout);
 		}
 	};
-
-} );
-
+});
 
 
 function getJSONtoHyperCube(layout) {
@@ -155,12 +144,12 @@ function getJSONtoHyperCube(layout) {
 				cont = 0;
 				myJson.dim_id = dim1Id[k];	
 				myJson.dim = dim1Labels[k];	
-					// Make sure radar_area_name is added for usage in the radar chart layers later
-					myJson.definition[cont]  = {"axis_id" : dim2Id[k], "axis" : dim2Labels[k], "value" : metric1Values[k], "radar_area_name" : dim1Labels[k]};
+					// Make sure radar_area is added for usage in the radar chart layers later
+					myJson.definition[cont]  = {"axis_id" : dim2Id[k], "axis" : dim2Labels[k], "radar_area_id" : dim1Id[k], "radar_area" : dim1Labels[k], "value" : metric1Values[k]};
 					cont++;		
-					// Make sure radar_area_name is added for usage in the radar chart layers later
+					// Make sure radar_area is added for usage in the radar chart layers later
 			}else{						
-					myJson.definition[cont]  = {"axis_id" : dim2Id[k], "axis" : dim2Labels[k], "value" : metric1Values[k], "radar_area_name" : dim1Labels[k]};
+					myJson.definition[cont]  = {"axis_id" : dim2Id[k], "axis" : dim2Labels[k], "radar_area_id" : dim1Id[k], "radar_area" : dim1Labels[k], "value" : metric1Values[k]};
 					cont++;
 			}												
 			actClassName =  dim1Labels[k];						
@@ -170,8 +159,8 @@ function getJSONtoHyperCube(layout) {
 		for(var k=0;k<dim1Labels.length;k++){									
 			// it is a different grouping value of Dim1
 			LegendValues.push(dim1Labels[k]);	
-					// Make sure radar_area_name is added for usage in the radar chart layers later
-					myJson.definition[cont]  = {"axis_id" : dim2Id[k], "axis" : dim2Labels[k], "value" : metric1Values[k], "radar_area_name" : "Default"};
+					// Make sure radar_area is added for usage in the radar chart layers later
+					myJson.definition[cont] = {"axis_id" : dim2Id[k], "axis" : dim2Labels[k], "radar_area_id" : dim1Id[k], "radar_area" : dim1Labels[k], "value" : metric1Values[k]};
 					cont++;
 		}	
 		data[contdata] = myJson;

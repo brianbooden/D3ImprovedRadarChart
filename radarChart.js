@@ -5,27 +5,20 @@
 /////////// Inspired by the code of alangrafu ///////////
 /////////////////////////////////////////////////////////
 	
-function RadarChart(id, json, options, $element, layout) {
+function RadarChart(id, json, options, self, $element, layout) {
 	var cfg = {
-	 w: 600,																//Width of the circle
-	 h: 600,																//Height of the circle
-	 margin: {top: 100, right: 100, bottom: 100, left: 100}, 				//The margins around the circle
-	 levels: 3,																//How many levels or inner circles should there be drawn
-	 maxValue: 0, 															//What is the value that the biggest circle will represent
-	 labelFactor: 1.25, 													//How much farther than the radius of the outer circle should the labels be placed
-	 wrapWidth: 100, 														//The number of pixels after which a label needs to be given a new line
-	 opacityArea: 0.0, 													//The opacity of the area of the blob
-	 dotRadius: 4, 															//The size of the colored circles of each blob
-	 opacityCircles: 0.1, 													//The opacity of the circles of each blob
-	 strokeWidth: 1.5, 														//The width of the stroke around each blob
-	 roundStrokes: false,													//If true the area and stroke will follow a round path (cardinal-closed)
-	 color: d3.scale.category10(),											//Color function
-	 axisName: "axis",
-	 areaName:"areaName",
-	 value: "value",
-	 sortAreas: true,
-	 legendPosition: {x: 20, y: 20}, 										// the position of the legend, from the top-left corner of the svg
-	 numDimensions: 1														// Number of dimensions to decide whether to show legend
+		size: {width: 450, height: 450},											//Width and Height of the circle
+		margin: {top: 100, right: 100, bottom: 100, left: 100}, 					//The margins around the circle
+		legendPosition: {x: 20, y: 20}, 											//The position of the legend, from the top-left corner of the svg
+		color: d3.scale.category10(),												//Color function
+		colorOpacity: {circle: 0.1, area_low: 0.1, area_med: 0.1, area_high:0.6},	//The opacity of the area of the blob
+		roundStrokes: false,														//If true the area and stroke will follow a round path (cardinal-closed)
+		maxValue: 1, 																//What is the value that the biggest circle will represent
+		levels: 5,																	//How many levels or inner circles should there be drawn
+		dotRadius: 4, 																//The size of the colored circles of each blob
+		labelFactor: 1.25, 															//How much farther than the radius of the outer circle should the labels be placed
+		wrapWidth: 100, 															//The number of pixels after which a label needs to be given a new line
+		strokeWidth: 1.5 															//The width of the stroke around each blob
 	};
 
 	//Convert the nested data passed in
@@ -39,16 +32,9 @@ function RadarChart(id, json, options, $element, layout) {
 	  }//for i
 	}//if
 	
-	//Map the fields specified in the configuration 
-	//to the axis and value variables
-	var axisName = cfg["axisName"],
-		areaName = cfg["areaName"],
-		value = cfg["value"];
-	
-	
 	//Calculate the average value for each area
 	data.forEach(function(d){
-		d[value + "Average"] = d3.mean(d,function(e) { return e.value}); 
+		d["value" + "Average"] = d3.mean(d,function(e) { return e.value}); 
 	})
 	
 	//Sort the data for the areas from largest to smallest
@@ -56,19 +42,21 @@ function RadarChart(id, json, options, $element, layout) {
 	//so that that the smallest area is drawn last
 	//and therefore appears on top
 	data = data.sort(function(a, b){
-		var a = a[value + "Average"],
-				b = b[value + "Average"];
+		var a = a["value" + "Average"],
+				b = b["value" + "Average"];
 		return b - a;
 	})
-
-	
 	
 	//If the supplied maxValue is smaller than the actual one, replace by the max in the data
 	var maxValue = Math.max(cfg.maxValue, d3.max(data, function(i){return d3.max(i.map(function(o){return o.value;}))}));
-		
+
+	if(cfg.size.width < cfg.size.height) {var graphH = cfg.size.width; var graphW = cfg.size.width} else {var graphH = cfg.size.height; var graphW = cfg.size.height; }
+	
 	var allAxis = (data[0].map(function(i, j){return i.axis})),				//Names of each axis
 		total = allAxis.length,												//The number of different axes
-		radius = Math.min(cfg.w/2, cfg.h/2), 								//Radius of the outermost circle
+		radius = Math.min(
+			(graphW/2) - cfg.margin.left - cfg.margin.right,
+			(graphH/2) - cfg.margin.top - cfg.margin.bottom), 				//Radius of the outermost circle
 		Format = d3.format('%'),			 								//Percentage formatting
 		angleSlice = Math.PI * 2 / total;									//The width in radians of each "slice"
 	
@@ -86,16 +74,19 @@ function RadarChart(id, json, options, $element, layout) {
 	
 	//Initiate the radar chart SVG
 	//var svg = d3.select(id).append("svg")
-	//		.attr("width",  cfg.w + cfg.margin.left + cfg.margin.right)
-	//		.attr("height", cfg.h + cfg.margin.top + cfg.margin.bottom)
+	//		.attr("width",  cfg.size.width + cfg.margin.left + cfg.margin.right)
+	//		.attr("height", cfg.size.height + cfg.margin.top + cfg.margin.bottom)
 	//		.attr("class", "radar"+id);
 			
 	// Chart object width  
-   var width = cfg.w +100 + cfg.margin.left + cfg.margin.right;  
+   var width = cfg.size.width - cfg.margin.left - cfg.margin.right;  
+
    // Chart object height  
-   var height = cfg.h +100 + cfg.margin.top + cfg.margin.bottom;  
+   var height = cfg.size.height - cfg.margin.top - cfg.margin.bottom; 
+
    // Chart object id  
-   var id = "container_" + layout.qInfo.qId;  
+   var id = "container_" + layout.qInfo.qId; 
+   
    // Check to see if the chart element has already been created  
    if (document.getElementById(id)) {  
 		// if it has been created, empty its contents so we can redraw it  
@@ -103,16 +94,26 @@ function RadarChart(id, json, options, $element, layout) {
    }  
    else {  
 		// if it hasn't been created, create it with the appropiate id and size  
-		 $element.append($('<div />').attr("id", id).width(width).height(height));  
+		 $element.append($('<div />').attr("id", id).width(cfg.size.width).height(cfg.size.height));  
    }  
    var svg = d3.select("#" + id).append("svg")  
-		.attr("width", width+100)  
-		.attr("height", height+100);  		
-			
+		.attr("width", cfg.size.width)  
+		.attr("height", cfg.size.height);  		
 			
 	//Append a g element		
 	var g = svg.append("g")
-			.attr("transform", "translate(" + (cfg.w/2 + cfg.margin.left) + "," + (cfg.h/2 + cfg.margin.top) + ")");
+			.attr("transform", "translate(" + (cfg.size.width/2) + "," + (cfg.size.height/2) + ")");
+	
+	/////////////////////////////////////////////////////////
+	////////// Glow filter for some extra pizzazz ///////////
+	/////////////////////////////////////////////////////////
+	
+	//Filter for the outside glow
+	var filter = g.append('defs').append('filter').attr('id','glow'),
+		feGaussianBlur = filter.append('feGaussianBlur').attr('stdDeviation','2.5').attr('result','coloredBlur'),
+		feMerge = filter.append('feMerge'),
+		feMergeNode_1 = feMerge.append('feMergeNode').attr('in','coloredBlur'),
+		feMergeNode_2 = feMerge.append('feMergeNode').attr('in','SourceGraphic');
 	
 	/////////////////////////////////////////////////////////
 	////////// Glow filter for some extra pizzazz ///////////
@@ -141,7 +142,7 @@ function RadarChart(id, json, options, $element, layout) {
 		.attr("r", function(d, i){return radius/cfg.levels*d;})
 		.style("fill", "#CDCDCD")
 		.style("stroke", "#CDCDCD")
-		.style("fill-opacity", cfg.opacityCircles)
+		.style("fill-opacity", cfg.colorOpacity.circle)
 		.style("filter" , "url(#glow)");
 
 	//Text indicating at what % each level is
@@ -212,47 +213,50 @@ function RadarChart(id, json, options, $element, layout) {
 		.append("path")
 		//.attr("class", "radarArea")
 		.attr("class", function(d) {
-			return "radarArea" + " " + d[0][areaName].replace(/\s+/g, '') //Remove spaces from the areaName string to make one valid class name
+			return "radarArea" + " " + d[0].radar_area.replace(/\s+/g, '') //Remove spaces from the .radar_area string to make one valid class name
 		})
 		.attr("d", function(d,i) { return radarLine(d); })
 		.style("fill", function(d,i) { return cfg.color(i); })
-		.style("fill-opacity", cfg.opacityArea)
-		.on('mouseover', function (d,i){
-			
+		.style("fill-opacity", cfg.colorOpacity.area)
+		.on('mouseover', function (d,i){		
 			// Make cursor pointer when hovering over blob
 			$("#"+id).css('cursor','pointer');
 			
 			//Dim all blobs
 			d3.selectAll(".radarArea")
 				.transition().duration(200)
-				.style("fill-opacity", 0.1); 
+				.style("fill-opacity", cfg.colorOpacity.area_out); 
 			//Bring back the hovered over blob
 			d3.select(this)
 				.transition().duration(200)
-				.style("fill-opacity", 0.7);	
-				
+				.style("fill-opacity", cfg.colorOpacity.area_over);	
+		/*
 			// Tooltip to display dimension of radar area on hovering over blob
 			tooltip
 				.attr('x', 50)
 				.attr('y', 50)
-				.text(d[0].radar_area_name)
+				.text(d[0].radar_area)
 				.transition().duration(200)
 				.style('opacity', 1);
-				
+		*/
+		})
+		.on('click', function (d){
+			// Select Value
+			self.backendApi.selectValues(0, [d[0].radar_area_id], true);	
 		})
 		.on('mouseout', function(){
 						
 			// keep mouse cursor arrow instead of text select (auto)
 			$("#"+id).css('cursor','default');
-			
+/*			
 			// Remove tooltip
 			tooltip.transition().duration(200)
 				.style("opacity", 0);
-				
+*/			
 			//Bring back all blobs
 			d3.selectAll(".radarArea")
 				.transition().duration(200)
-				.style("fill-opacity", cfg.opacityArea);
+				.style("fill-opacity", cfg.colorOpacity.area);
 		});
 		
 	//Create the outlines	
@@ -303,7 +307,7 @@ function RadarChart(id, json, options, $element, layout) {
 			tooltip
 				.attr('x', newX)
 				.attr('y', newY)
-				.text(Format(d.value))
+				.text(d.radar_area + " : " + Format(d.value))
 				.transition().duration(200)
 				.style('opacity', 1);
 		})
@@ -349,32 +353,37 @@ function RadarChart(id, json, options, $element, layout) {
 	  });
 	}//wrap	
 
-		// on mouseover for the legend symbol
+	// on mouseover for the legend symbol
 	function cellover(d) {
-			// keep mouse cursor arrow instead of text select (auto)
-			$("#"+id).css('cursor','pointer');
-			
-			// Tooltip to display dimension of radar area on hovering over blob
-			tooltip
-				.attr('x', 50)
-				.attr('y', 50)
-				.text(data[d][0].radar_area_name)
-				.transition().duration(200)
-				.style('opacity', 1);
-			
-			//Dim all blobs
-			d3.selectAll(".radarArea")
-				.transition().duration(200)
-				.style("fill-opacity", 0.0); 
-			//Bring back the hovered over blob
-			d3.select("." + data[d][0][areaName].replace(/\s+/g, ''))
-				.transition().duration(200)
-				.style("fill-opacity", 0.7);	
+		// keep mouse cursor arrow instead of text select (auto)
+		$("#"+id).css('cursor','pointer');
+		
+		// Tooltip to display dimension of radar area on hovering over blob
+		tooltip
+			.attr('x', 50)
+			.attr('y', 50)
+			.text(data[d][0].radar_area)
+			.transition().duration(200)
+			.style('opacity', 1);
+		
+		//Dim all blobs
+		d3.selectAll(".radarArea")
+			.transition().duration(200)
+			.style("fill-opacity", cfg.colorOpacity.area_out); 
+		//Bring back the hovered over blob
+		d3.select("." + data[d][0].radar_area.replace(/\s+/g, ''))
+			.transition().duration(200)
+			.style("fill-opacity", cfg.colorOpacity.area_over);	
 	}
 
+	// on mouseclick for the legend symbol
+	function cellclick(d) {
+		// Select Value
+		self.backendApi.selectValues(0, [d[0].radar_area_id], true);		
+	}
+	
 	// on mouseout for the legend symbol
 	function cellout() {
-	
 		tooltip.transition().duration(200)
 			.style("opacity", 0);	
 	
@@ -382,7 +391,7 @@ function RadarChart(id, json, options, $element, layout) {
 		$("#"+id).css('cursor','default');
 		d3.selectAll(".radarArea")
 			.transition().duration(200)
-			.style("fill-opacity", cfg.opacityArea);
+			.style("fill-opacity", cfg.colorOpacity.area);
 	}
 
 	/////////////////////////////////////////////////////////
@@ -390,23 +399,23 @@ function RadarChart(id, json, options, $element, layout) {
 	/////////////////////////////////////////////////////////
 
 	svg.append("g")
-  	.attr("class", "legendOrdinal")
-  	.attr("transform", "translate(" + cfg["legendPosition"]["x"] + "," + cfg["legendPosition"]["y"] + ")");
+		.attr("class", "legendOrdinal")
+		.attr("transform", "translate(" + cfg["legendPosition"]["x"] + "," + cfg["legendPosition"]["y"] + ")");
 
 	var legendOrdinal = d3.legend.color()
-	//d3 symbol creates a path-string, for example
-	//"M0,-8.059274488676564L9.306048591020996,
-	//8.059274488676564 -9.306048591020996,8.059274488676564Z"
-  	.shape("path", d3.svg.symbol().type("circle").size(150)())
-  	.shapePadding(10)
-  	.scale(cfg.color)
-  	.labels(cfg.color.domain().map(function(d){
-  		return data[d][0][areaName];
-  	}))
-  	.on("cellover", function(d){ cellover(d); })
-  	.on("cellout", function(d) { cellout(); });
+		.shape("path", d3.svg.symbol().type("circle").size(150)())
+		.shapePadding(10)
+		.scale(cfg.color)
+		.labels(cfg.color.domain().map(function(d){
+			return data[d][0].radar_area;
+		}))
+		.on("cellover", function(d){ cellover(d); })
+		.on("cellclick", function (d){ cellclick(d); })
+		.on("cellout", function(d){ cellout(); });
 
-svg.select(".legendOrdinal")
-  .call(legendOrdinal);
+	if(layout.qHyperCube.qDimensionInfo.length !== 1) {
+		svg.select(".legendOrdinal")
+		  .call(legendOrdinal);
+	}
 	
 }//RadarChart
