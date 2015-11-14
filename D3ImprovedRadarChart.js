@@ -1,6 +1,4 @@
-define(["jquery", "./d3.min", "https://cdnjs.cloudflare.com/ajax/libs/d3-legend/1.3.0/d3-legend.js", "text!./D3ImprovedRadarChart.css","./radarChart"],
-function ( ) {
-
+define(["jquery", "./d3.min", "./radarChart", "https://cdnjs.cloudflare.com/ajax/libs/d3-legend/1.3.0/d3-legend.js"], function() {
 	return {
 		initialProperties: {
 			qHyperCubeDef: {
@@ -28,7 +26,28 @@ function ( ) {
 				},
 				sorting: {
 					uses: "sorting"
-				}
+				},
+				settings : {
+					uses : "settings",
+					items : {	
+						showLegend:{
+							type: "boolean",
+							component: "switch",
+							translation: "Legend",
+							ref: "showLegend",
+							defaultValue: true,
+							trueOption: {
+							  value: true,
+							  translation: "properties.on"
+							},
+							falseOption: {
+							  value: false,
+							  translation: "properties.off"
+							},
+							show: true
+						  },
+					}
+				}					
 			}
 		},
 		snapshot: {
@@ -53,30 +72,96 @@ function ( ) {
 				maxValue: .6,																				//What is the value that the biggest circle will represent
 				levels: 6,																					//How many levels or inner circles should there be drawn
 				dotRadius: 4, 																				//The size of the colored circles of each blob
-				labelFactor: 1.13, 																			//How much farther than the radius of the outer circle should the labels be placed
+				labelFactor: 1.14, 																			//How much farther than the radius of the outer circle should the labels be placed
 				wrapWidth: 100, 																			//The number of pixels after which a label needs to be given a new line
-				strokeWidth: 2.8 																			//The width of the stroke around each blob
+				strokeWidth: 2.8, 																			//The width of the stroke around each blob
+				optionSorting: checkSORTING(layout),														//The sorting configuration
+				optionLegend: layout.showLegend																//Display the legend
 			};
 			
 			////////////////////////////////////////////////////////////// 
 			////////////////////////// Data ////////////////////////////// 
 			////////////////////////////////////////////////////////////// 
 								
-			var json = getJSONtoHyperCube(layout);
+			var json = convertHYPERCUBEtoJSON(layout);
 			
 			////////////////////////////////////////////////////////////// 
 			//////////////////// Draw the Chart ////////////////////////// 
 			////////////////////////////////////////////////////////////// 		
-
-			//$element.html(JSON.stringify(json));
 			
-			RadarChart(".radarChart", json, radarChartOptions, this, $element, layout);
+			if(radarChartOptions.optionSorting[0] == true) {
+					
+				displayRADAR(".radarChart", radarChartOptions, $element, layout, json, this);
+				
+			} else {
+
+				displayMESSAGE(".radarChart", radarChartOptions, $element, layout, radarChartOptions.optionSorting[2]);
+				
+			}
 		}
 	};
 });
 
+function checkSORTING(layout) {
+	var result = [];
 
-function getJSONtoHyperCube(layout) {
+	// Detect if sorting is correct
+	if((layout.qHyperCube.qEffectiveInterColumnSortOrder[0] == 0) && (layout.qHyperCube.qEffectiveInterColumnSortOrder[1] == 1)) { result[0] = true; } else { result[0] = false; }
+
+	// Detect the browser language
+	switch (navigator.language.toUpperCase().split("-")[0]) {
+		case "FR":
+			result[1] = "Veuillez trier les dimensions et les mesures comme décrit ci-après :"				//FRENCH
+			break;
+		case "DE":
+			result[1] = "Sie ordnen die Abmessungen und die Maßnahmen, wie nachstehend beschrieben :";		//GERMAN
+			break;
+		case "ES":
+			result[1] = "Por favor, ordenar las dimensiones y medidas como se describe a continuación :"	//SPANISH
+			break;
+		default:
+			result[1] = "Please sort the dimensions and measures as described below :";						//ENGLISH
+			break;
+	};
+
+	// Build the error message
+	result[2] = '<div style="position:relative; top:45%; text-align:center; font-size:15px">' + result[1] + '<p style="position:relative; padding-left:44%; text-align:left; font-size:14px"> 1. > &nbsp;' + layout.qHyperCube.qDimensionInfo[0].qFallbackTitle + "<br/> 2. > &nbsp;" + layout.qHyperCube.qDimensionInfo[1].qFallbackTitle + "<br/> 3. > &nbsp;" + layout.qHyperCube.qMeasureInfo[0].qFallbackTitle + '</p></div>';
+	
+	return result;
+}
+
+function displayMESSAGE(id, cfg, $element, layout, message) {
+	
+	// Remove whatever chart with the same id/class was present before
+	d3.select(id).select("svg").remove();
+
+	// Chart object id  
+	var id = "container_" + layout.qInfo.qId; 
+
+	// Check to see if the chart element has already been created  
+	if (document.getElementById(id)) {  
+		// if it has been created, empty its contents so we can redraw it  
+		 $("#" + id).empty();  
+	}  
+	else {  
+		// if it hasn't been created, create it with the appropiate id and size  
+		 $element.append($('<div />').attr("id", id).width(cfg.size.width).height(cfg.size.height));  
+	}
+	
+	//Display error message
+	var svg = d3.select("#" + id).append("svg")  
+		.attr("width", cfg.size.width)  
+		.attr("height", cfg.size.height);
+	
+    var g = svg.append('g').attr("transform" ,"scale(0)");
+	
+    var text = g.append('foreignObject')
+                    .attr('width', cfg.size.width)
+                    .attr('height', cfg.size.height)
+                    .html(cfg.sort[2]);	
+}
+
+function convertHYPERCUBEtoJSON(layout) {
 
 	// get qMatrix data array
 	var qMatrix = layout.qHyperCube.qDataPages[0].qMatrix;

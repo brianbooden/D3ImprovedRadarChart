@@ -1,11 +1,12 @@
-/////////////////////////////////////////////////////////
-/////////////// The Radar Chart Function ////////////////
-/////////////// Written by Nadieh Bremer ////////////////
-////////////////// VisualCinnamon.com ///////////////////
-/////////// Inspired by the code of alangrafu ///////////
-/////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////
+/////////////// The Radar Chart Function ///////////////////
+////////////////// Written by Nadieh Bremer ////////////////
+///////////////////// VisualCinnamon.com ///////////////////
+////////////// Inspired by the code of alangrafu ///////////
+// Adapted to Qlik Sense by Brian Booden & Matthieu Burel //
+////////////////////////////////////////////////////////////
 	
-function RadarChart(id, json, options, self, $element, layout) {
+function displayRADAR(id, options, $element, layout, data, self) {
 	var cfg = {
 		size: {width: 450, height: 450},											//Width and Height of the circle
 		margin: {top: 100, right: 100, bottom: 100, left: 100}, 					//The margins around the circle
@@ -23,7 +24,7 @@ function RadarChart(id, json, options, self, $element, layout) {
 
 	//Convert the nested data passed in
 	//into an array of values arrays
-	var data = json.map(function(d) { return d.definition });
+	var data = data.map(function(d) { return d.definition });
 	
 	//Put all of the options into a variable called cfg
 	if('undefined' !== typeof options){
@@ -98,12 +99,12 @@ function RadarChart(id, json, options, self, $element, layout) {
    }  
    var svg = d3.select("#" + id).append("svg")  
 		.attr("width", cfg.size.width)  
-		.attr("height", cfg.size.height);  		
+		.attr("height", cfg.size.height);
 			
 	//Append a g element		
 	var g = svg.append("g")
 			.attr("transform", "translate(" + (cfg.size.width/2) + "," + (cfg.size.height/2) + ")");
-	
+			
 	/////////////////////////////////////////////////////////
 	////////// Glow filter for some extra pizzazz ///////////
 	/////////////////////////////////////////////////////////
@@ -180,7 +181,7 @@ function RadarChart(id, json, options, self, $element, layout) {
 	//Append the labels at each axis
 	axis.append("text")
 		.attr("class", "legend")
-		.style("font-size", "10px")
+		.style("font-size", "11.5px")
 		.attr("text-anchor", "middle")
 		.attr("dy", "0.35em")
 		.attr("x", function(d, i){ return rScale(maxValue * cfg.labelFactor) * Math.cos(angleSlice*i - Math.PI/2); })
@@ -230,15 +231,6 @@ function RadarChart(id, json, options, self, $element, layout) {
 			d3.select(this)
 				.transition().duration(200)
 				.style("fill-opacity", cfg.colorOpacity.area_over);	
-		/*
-			// Tooltip to display dimension of radar area on hovering over blob
-			tooltip
-				.attr('x', 50)
-				.attr('y', 50)
-				.text(d[0].radar_area)
-				.transition().duration(200)
-				.style('opacity', 1);
-		*/
 		})
 		.on('click', function (d){
 			// Select Value
@@ -248,11 +240,7 @@ function RadarChart(id, json, options, self, $element, layout) {
 						
 			// keep mouse cursor arrow instead of text select (auto)
 			$("#"+id).css('cursor','default');
-/*			
-			// Remove tooltip
-			tooltip.transition().duration(200)
-				.style("opacity", 0);
-*/			
+	
 			//Bring back all blobs
 			d3.selectAll(".radarArea")
 				.transition().duration(200)
@@ -355,40 +343,37 @@ function RadarChart(id, json, options, self, $element, layout) {
 
 	// on mouseover for the legend symbol
 	function cellover(d) {
-		// keep mouse cursor arrow instead of text select (auto)
 		$("#"+id).css('cursor','pointer');
-		
-		// Tooltip to display dimension of radar area on hovering over blob
-		tooltip
-			.attr('x', 50)
-			.attr('y', 50)
-			.text(data[d][0].radar_area)
-			.transition().duration(200)
-			.style('opacity', 1);
 		
 		//Dim all blobs
 		d3.selectAll(".radarArea")
 			.transition().duration(200)
 			.style("fill-opacity", cfg.colorOpacity.area_out); 
-		//Bring back the hovered over blob
+
+			//Bring back the hovered over blob
 		d3.select("." + data[d][0].radar_area.replace(/\s+/g, ''))
 			.transition().duration(200)
 			.style("fill-opacity", cfg.colorOpacity.area_over);	
 	}
 
 	// on mouseclick for the legend symbol
-	function cellclick(d) {
+	function cellclick(d,i) {
+		$("#"+id).css('cursor','default');
+		
+		//Bring back all blobs
+		d3.selectAll(".radarArea")
+			.transition().duration(200)
+			.style("fill-opacity", 0.9);
+			
 		// Select Value
-		self.backendApi.selectValues(0, [d[0].radar_area_id], true);		
+		self.backendApi.selectValues(0, [data[d][0].radar_area_id], true);		
 	}
 	
 	// on mouseout for the legend symbol
 	function cellout() {
-		tooltip.transition().duration(200)
-			.style("opacity", 0);	
-	
-		//Bring back all blobs
 		$("#"+id).css('cursor','default');
+		
+		//Bring back all blobs
 		d3.selectAll(".radarArea")
 			.transition().duration(200)
 			.style("fill-opacity", cfg.colorOpacity.area);
@@ -413,7 +398,7 @@ function RadarChart(id, json, options, self, $element, layout) {
 		.on("cellclick", function (d){ cellclick(d); })
 		.on("cellout", function(d){ cellout(); });
 
-	if(layout.qHyperCube.qDimensionInfo.length !== 1) {
+	if((layout.qHyperCube.qDimensionInfo.length !== 1) && (cfg.optionLegend == true)){
 		svg.select(".legendOrdinal")
 		  .call(legendOrdinal);
 	}
