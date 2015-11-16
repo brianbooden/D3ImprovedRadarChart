@@ -29,7 +29,7 @@ define(["jquery", "./d3.min", "./radarChart", "https://cdnjs.cloudflare.com/ajax
 				},
 				settings : {
 					uses : "settings",
-					items : {	
+					items : {
 						showLegend:{
 							type: "boolean",
 							component: "switch",

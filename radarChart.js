@@ -25,7 +25,7 @@ function displayRADAR(id, options, $element, layout, data, self) {
 	//Convert the nested data passed in
 	//into an array of values arrays
 	var data = data.map(function(d) { return d.definition });
-	
+
 	//Put all of the options into a variable called cfg
 	if('undefined' !== typeof options){
 	  for(var i in options){
@@ -34,19 +34,19 @@ function displayRADAR(id, options, $element, layout, data, self) {
 	}//if
 	
 	//Calculate the average value for each area
-	data.forEach(function(d){
-		d["value" + "Average"] = d3.mean(d,function(e) { return e.value}); 
-	})
+//	data.forEach(function(d){
+//		d["value" + "Average"] = d3.mean(d,function(e) { return e.value}); 
+//	})
 	
 	//Sort the data for the areas from largest to smallest
 	//by average value as an approximation of actual blob area
 	//so that that the smallest area is drawn last
 	//and therefore appears on top
-	data = data.sort(function(a, b){
-		var a = a["value" + "Average"],
-				b = b["value" + "Average"];
-		return b - a;
-	})
+//	data = data.sort(function(a, b){
+//		var a = a["value" + "Average"],
+//				b = b["value" + "Average"];
+//		return b - a;
+//	})
 	
 	//If the supplied maxValue is smaller than the actual one, replace by the max in the data
 	var maxValue = Math.max(cfg.maxValue, d3.max(data, function(i){return d3.max(i.map(function(o){return o.value;}))}));
@@ -391,7 +391,7 @@ function displayRADAR(id, options, $element, layout, data, self) {
 		.shape("path", d3.svg.symbol().type("circle").size(150)())
 		.shapePadding(10)
 		.scale(cfg.color)
-		.labels(cfg.color.domain().map(function(d){
+		.labels(cfg.color.domain().map(function(d,i){
 			return data[d][0].radar_area;
 		}))
 		.on("cellover", function(d){ cellover(d); })
