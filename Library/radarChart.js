@@ -19,7 +19,9 @@ function displayRADAR(id, options, $element, layout, data, self) {
 		dotRadius: 4, 																//The size of the colored circles of each blob
 		labelFactor: 1.25, 															//How much farther than the radius of the outer circle should the labels be placed
 		wrapWidth: 100, 															//The number of pixels after which a label needs to be given a new line
-		strokeWidth: 1.5 															//The width of the stroke around each blob
+		strokeWidth: 1.5, 															//The width of the stroke around each blob
+		sortingCheck: [true],														//The sorting configuration
+		legendDisplay: true															//Display the legend
 	};
 
 	//Convert the nested data passed in
@@ -392,13 +394,14 @@ function displayRADAR(id, options, $element, layout, data, self) {
 		.shapePadding(10)
 		.scale(cfg.color)
 		.labels(cfg.color.domain().map(function(d,i){
-			return data[d][0].radar_area;
+			return data[d][0].radar_area
+//			return data[d][0].radar_area + " - " + data[d][0].radar_area_id;
 		}))
 		.on("cellover", function(d){ cellover(d); })
 		.on("cellclick", function (d){ cellclick(d); })
 		.on("cellout", function(d){ cellout(); });
 
-	if((layout.qHyperCube.qDimensionInfo.length !== 1) && (cfg.optionLegend == true)){
+	if((layout.qHyperCube.qDimensionInfo.length !== 1) && (cfg.legendDisplay == true)){
 		svg.select(".legendOrdinal")
 		  .call(legendOrdinal);
 	}
