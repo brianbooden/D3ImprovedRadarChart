@@ -383,6 +383,14 @@ function displayRADAR(id, options, $element, layout, data, self) {
 		svg.select(".legendOrdinal")
 		  .call(legendOrdinal);
 	}
+
+	/*
+		IntegraXor Web SCADA - JavaScript Number Formatter
+		http://www.integraxor.com/
+		author: KPL, KHL
+		(c)2011 ecava
+		Dual licensed under the MIT or GPL Version 2 licenses.
+	*/
 	
 	function format( m, v){ 
 		if (!m || isNaN(+v)) {
