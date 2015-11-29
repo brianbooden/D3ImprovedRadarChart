@@ -147,7 +147,8 @@ define(["jquery", "./Library/d3.min", "./Library/radarChart", "https://cdnjs.clo
 				wrapWidth: 100, 																			//The number of pixels after which a label needs to be given a new line
 				strokeWidth: 2.8, 																			//The width of the stroke around each blob
 				sortingCheck: checkSORTING(layout),															//The sorting configuration
-				legendDisplay: layout.showLegend															//Display the legend
+				legendDisplay: layout.showLegend,															//Display the legend
+				numberFormat: getFORMAT(layout)																//Format for number
 			};
 			
 			////////////////////////////////////////////////////////////// 
@@ -168,7 +169,41 @@ define(["jquery", "./Library/d3.min", "./Library/radarChart", "https://cdnjs.clo
 		}
 	};
 
+
+ 	function getFORMAT(layout) {
+
+		var result = [];
+			result[0] = '# ##0,00';
+			result[1] = 1;
+			result[2] = '';
+			
+		if (typeof layout.qHyperCube.qMeasureInfo[0].qNumFormat.qFmt != 'undefined') {
+			
+			var formatType 			= layout.qHyperCube.qMeasureInfo[0].qNumFormat.qType;
+			var formatDefinition	= layout.qHyperCube.qMeasureInfo[0].qNumFormat.qFmt;
+			var formatPrecision		= layout.qHyperCube.qMeasureInfo[0].qNumFormat.qFmt.replace(/%/g, '').trim();
+		
+			if(formatType == 'F') {		// Format "Number"
+				switch (formatDefinition) {
+					case "# ##0":
+						result[0] = "# ##0,";
+						break
+					default:
+						result[0] = formatPrecision;
+						break
+				}
+			}
+
+			var symbole = formatDefinition.replace(formatPrecision, '').trim();
+		
+			if(symbole == '%') {
+				result[1] = 100;
+				result[2] = '%';
+			}
+		}
 	
+		return result;	
+	}	
 	
 	function checkSORTING(layout) {
 		var result = [];
@@ -204,7 +239,6 @@ define(["jquery", "./Library/d3.min", "./Library/radarChart", "https://cdnjs.clo
 	
 		return result;
 	}
-
 
 	function getCOLOR(layout) {
 		var color = [];
@@ -327,7 +361,6 @@ define(["jquery", "./Library/d3.min", "./Library/radarChart", "https://cdnjs.clo
 		return result;
 	}
 
-
 	function convertHYPERCUBEtoJSON(layout) {
 
 		// get qMatrix data array
@@ -419,7 +452,6 @@ define(["jquery", "./Library/d3.min", "./Library/radarChart", "https://cdnjs.clo
 		}
 		return data;
 	}
-
 
 	function displayMESSAGE(id, cfg, $element, layout, message) {
 		
