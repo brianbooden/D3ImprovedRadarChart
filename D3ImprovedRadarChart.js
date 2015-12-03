@@ -32,6 +32,21 @@ define(["jquery", "./Library/d3.min", "./Library/radarChart", "https://cdnjs.clo
 				settings : {
 					uses : "settings",
 					items : {
+						Line:{
+							ref: "strokeStyle",
+							component: "dropdown",
+							type: "boolean",
+							label: "Stroke type",
+							defaultValue:  true,
+							options: [{
+									value: true,
+									label: "Smooth"
+								}, {
+									value: false,
+									label: "Straight"
+								}],
+							show: true
+						},
 						Legend:{
 							ref: "showLegend",
 							component: "switch",
@@ -139,7 +154,7 @@ define(["jquery", "./Library/d3.min", "./Library/radarChart", "https://cdnjs.clo
 				legendPosition: {x: 40, y: 40},																//The position of the legend, from the top-left corner of the svg
 				color: d3.scale.ordinal().range(getCOLOR(layout)),																				//Color function
 				colorOpacity: {circle: 0.1, area: 0.2, area_out: 0.1, area_over: 0.6, area_click: 0.8},		//The opacity of the area of the blob
-				roundStrokes: true,																			//If true the area and stroke will follow a round path (cardinal-closed)		
+				roundStrokes: layout.strokeStyle,																//If true the area and stroke will follow a round path (cardinal-closed)		
 				maxValue: .6,																				//What is the value that the biggest circle will represent
 				levels: 6,																					//How many levels or inner circles should there be drawn
 				dotRadius: 4, 																				//The size of the colored circles of each blob
