@@ -1,4 +1,4 @@
-define(["jquery", "./Library/d3.min", "./Library/radarChart", "https://cdnjs.cloudflare.com/ajax/libs/d3-legend/1.3.0/d3-legend.js", "./Library/chroma.min"],
+define(["jquery", "./Library/d3-legend-new.min", "./Library/radarChart", "./Library/chroma.min"],
 	function($, d3, radar, legend, chroma) {
 
 	return {
