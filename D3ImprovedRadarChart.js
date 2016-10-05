@@ -1,5 +1,5 @@
 define(["jquery", "./Library/d3-legend-new.min", "./Library/radarChart", "./Library/chroma.min"],
-	function($, d3, radar, legend, chroma) {
+	function($,legend, radar, chroma) {
 
 	return {
 		initialProperties: {
@@ -7,8 +7,8 @@ define(["jquery", "./Library/d3-legend-new.min", "./Library/radarChart", "./Libr
 				qDimensions: [],
 				qMeasures: [],
 				qInitialDataFetch: [{
-					qWidth: 10,
-					qHeight: 50
+					qWidth: 3,
+					qHeight: 3333
 				}]
 			}
 		},
@@ -18,7 +18,7 @@ define(["jquery", "./Library/d3-legend-new.min", "./Library/radarChart", "./Libr
 			items: {
 				dimensions: {
 					uses: "dimensions",
-					min: 1,
+					min: 2,
 					max: 2
 				},
 				measures: {
@@ -62,78 +62,51 @@ define(["jquery", "./Library/d3-legend-new.min", "./Library/radarChart", "./Libr
 							  translation: "properties.off"
 							},
 							show: true
-						},				
-						Color:{
+						},
+						colors: {
+							
 							type: "items",
 							label: "Colors",
 							items : {
-								colorPalette: {
-									ref: "colorPalette",
-									component: "dropdown",
-									type: "string",
-									label: "Color palette",
-									defaultValue:  "QLIK",
-									options: [{
-											value: "QLIK",
-											label: "Qlik"
+								ColorSchema: {
+								ref: "ColorSchema",
+								type: "string",
+								component: "dropdown",
+								label: "Color",
+								show: true,
+								options: 
+								[ {
+											value: "#fee391, #fec44f, #fe9929, #ec7014, #cc4c02, #993404, #662506",
+											label: "Sequential"
 										}, {
-											value: "CUSTOM",
-											label: "Custom color"
+											value: "#662506, #993404, #cc4c02, #ec7014, #fe9929, #fec44f, #fee391",
+											label: "Sequential (Reverse)"
 										}, {
-											value: "FORMULA",
-											label: "Formula color"
-										}],
-									show: true
-								},
-								customPalette: {
-									ref: "customPalette",
-									type: "string",
-									label: "Custom color palette",
-									defaultValue: "#EDC951, #CC333F, #00A0B0",
-									expression: "",
-									show: function(layout) { return layout.colorPalette == "CUSTOM" }
-								},
-								formulaPalette: {
-									ref: "formulaPalette",
-									type: "string",
-									label: "Formula color palette",
-									defaultValue: "= Concat(Distinct Color, ', ')",
-									expression: "always",
-									show: function(layout) { return layout.colorPalette == "FORMULA" }
-								},
-								colorLinear:{
-									ref: "colorLinear",
-									component: "switch",
-									type: "boolean",
-									translation: "Linear scale",
-									defaultValue: false,
-									trueOption: {
-									  value: true,
-									  translation: "properties.on"
-									},
-									falseOption: {
-									  value: false,
-									  translation: "properties.off"
-									},
-									show: function(layout) { return layout.colorPalette == "CUSTOM" }
-								},
-								colorPersistence:{
-									ref: "colorPersistence",
-									component: "switch",
-									type: "boolean",
-									translation: "Persistence",
-									defaultValue: false,
-									trueOption: {
-									  value: true,
-									  translation: "properties.on"
-									},
-									falseOption: {
-									  value: false,
-									  translation: "properties.off"
-									},
-									show: true
+											value: "#d73027, #f46d43, #fee090, #abd9e9, #74add1, #4575b4",
+											label: "Diverging RdYlBu"
+										}, {
+											value: "#4575b4, #74add1, #abd9e9, #fee090, #f46d43, #d73027",
+											label: "Diverging BuYlRd (Reverse)"
+										}, {
+											value: "#deebf7, #c6dbef, #9ecae1, #6baed6, #4292c6, #2171b5, #08519c, #08306b",
+											label: "Blues"
+										}, {
+											value: "#fee0d2, #fcbba1, #fc9272, #fb6a4a, #ef3b2c, #cb181d, #a50f15, #67000d",
+											label: "Reds"
+										}, {
+											value: "#edf8b1, #c7e9b4, #7fcdbb, #41b6c4, #1d91c0, #225ea8, #253494, #081d58",
+											label: "YlGnBu"
+										}, {
+											value: "#332288, #6699CC, #88CCEE, #44AA99, #117733, #999933, #DDCC77, #661100, #CC6677, #AA4466, #882255, #AA4499",
+											label: "12 colors"
+										}, {
+											value: "#AA4499, #882255, #AA4466, #CC6677, #661100, #DDCC77, #999933, #117733, #44AA99, #88CCEE, #6699CC, #332288",
+											label: "12 colors (Reverse)"
+										}
+									],
+										defaultValue: "#332288, #6699CC, #88CCEE, #44AA99, #117733, #999933, #DDCC77, #661100, #CC6677, #AA4466, #882255, #AA4499"
 								}
-							}
+							}		
 						}					
 					}
 				}					
@@ -145,32 +118,42 @@ define(["jquery", "./Library/d3-legend-new.min", "./Library/radarChart", "./Libr
 		paint: function ($element, layout) {
 
 			////////////////////////////////////////////////////////////// 
+			////////////////////////// Data ////////////////////////////// 
+			////////////////////////////////////////////////////////////// 
+								
+			var json = convertHYPERCUBEtoJSON(layout);
+		
+			var colorpalette = layout.ColorSchema.split(", ")
+			domainLength = d3.max(json, function (d) { return d.length; });
+		
+			// Set the colour properties
+					var colorRange = d3.scale.ordinal()
+									.domain([0, domainLength])
+									.range(colorpalette);
+		
+			////////////////////////////////////////////////////////////// 
 			////////////////////// Set-Up display //////////////////////// 
 			////////////////////////////////////////////////////////////// 
 			
 			var options = {
 				size: {width: $element.width(), height: $element.height()},									//Width and Height of the circle
-				margin: {top: 50, right: 50, bottom: 50, left: 50},											//The margins around the circle
-				legendPosition: {x: 40, y: 40},																//The position of the legend, from the top-left corner of the svg
-				color: d3.scale.ordinal().range(getCOLOR(layout)),																				//Color function
+				margin: {top: 0, right: 10, bottom: 40, left: 10},											//The margins around the circle
+				legendPosition: {x: 10, y: 10},																//The position of the legend, from the top-left corner of the svg
+				color: d3.scale.ordinal().range(colorpalette),																				//Color function
 				colorOpacity: {circle: 0.1, area: 0.2, area_out: 0.1, area_over: 0.6, area_click: 0.8},		//The opacity of the area of the blob
 				roundStrokes: layout.strokeStyle,																//If true the area and stroke will follow a round path (cardinal-closed)		
 				maxValue: .6,																				//What is the value that the biggest circle will represent
 				levels: 6,																					//How many levels or inner circles should there be drawn
 				dotRadius: 4, 																				//The size of the colored circles of each blob
-				labelFactor: 1.14, 																			//How much farther than the radius of the outer circle should the labels be placed
-				wrapWidth: 100, 																			//The number of pixels after which a label needs to be given a new line
+				labelFactor: 1.02, 																			//How much farther than the radius of the outer circle should the labels be placed
+				wrapWidth: 50, 																				//The number of pixels after which a label needs to be given a new line
 				strokeWidth: 2.8, 																			//The width of the stroke around each blob
 				sortingCheck: checkSORTING(layout),															//The sorting configuration
 				legendDisplay: layout.showLegend,															//Display the legend
 				numberFormat: getFORMAT(layout)																//Format for number
 			};
 			
-			////////////////////////////////////////////////////////////// 
-			////////////////////////// Data ////////////////////////////// 
-			////////////////////////////////////////////////////////////// 
-								
-			var json = convertHYPERCUBEtoJSON(layout);
+
 			
 			////////////////////////////////////////////////////////////// 
 			//////////////////// Draw the Chart ////////////////////////// 
@@ -255,6 +238,19 @@ define(["jquery", "./Library/d3-legend-new.min", "./Library/radarChart", "./Libr
 		return result;
 	}
 
+	function getCOLORNew(layout, json) { 
+	
+		var colorpalette = layout.ColorSchema.split(", ")
+		domainLength = d3.max(json, function (d) { return d.length; });
+	
+		// Set the colour properties
+				var color = d3.scale.ordinal()
+								.domain([0, domainLength])
+								.range(colorpalette);
+	
+		return color;
+	}
+	
 	function getCOLOR(layout) {
 		var color = [];
 		var result = [];

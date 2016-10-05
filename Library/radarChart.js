@@ -302,7 +302,7 @@ function displayRADAR(id, options, $element, layout, data, self) {
 			word,
 			line = [],
 			lineNumber = 0,
-			lineHeight = 1.4, // ems
+			lineHeight = 1.1, // ems
 			y = text.attr("y"),
 			x = text.attr("x"),
 			dy = parseFloat(text.attr("dy")),
@@ -368,7 +368,7 @@ function displayRADAR(id, options, $element, layout, data, self) {
 		.attr("transform", "translate(" + cfg["legendPosition"]["x"] + "," + cfg["legendPosition"]["y"] + ")");
 
 	var legendOrdinal = d3.legend.color()
-		.shape("path", d3.svg.symbol().type("circle").size(150)())
+		.shape("path", d3.svg.symbol().type("circle").size(40)())
 		.shapePadding(10)
 		.scale(cfg.color)
 		.labels(cfg.color.domain().map(function(d,i){
