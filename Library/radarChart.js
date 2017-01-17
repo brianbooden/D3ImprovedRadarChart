@@ -134,7 +134,7 @@ function displayRADAR(id, options, $element, layout, data, self) {
 	   .attr("x", 4)
 	   .attr("y", function(d){return -d*radius/cfg.levels;})
 	   .attr("dy", "0.4em")
-	   .style("font-size", "10px")
+	   .style("font-size", "12px")
 	   .attr("fill", "#737373")
 	   .text(function(d,i) { return format(options.numberFormat[0], (maxValue * d/cfg.levels)*options.numberFormat[1]) + options.numberFormat[2]; });
 
@@ -161,7 +161,7 @@ function displayRADAR(id, options, $element, layout, data, self) {
 	//Append the labels at each axis
 	axis.append("text")
 		.attr("class", "legend")
-		.style("font-size", "11.5px")
+		.style("font-size", "14px")
 		.attr("text-anchor", "middle")
 		.attr("dy", "0.35em")
 		.attr("x", function(d, i){ return rScale(maxValue * cfg.labelFactor) * Math.cos(angleSlice*i - Math.PI/2); })
@@ -194,7 +194,7 @@ function displayRADAR(id, options, $element, layout, data, self) {
 		.append("path")
 		//.attr("class", "radarArea")
 		.attr("class", function(d) {
-			return "radarArea" + " " + d[0].radar_area.replace(/\s+/g, '') //Remove spaces from the .radar_area string to make one valid class name
+			return "radarArea" + " c" + d[0].radar_area.replace(/\s+/g, '') //Remove spaces from the .radar_area string to make one valid class name
 		})
 		.attr("d", function(d,i) { return radarLine(d); })
 		.style("fill", function(d,i) { return cfg.color(i); })
@@ -330,8 +330,8 @@ function displayRADAR(id, options, $element, layout, data, self) {
 			.transition().duration(200)
 			.style("fill-opacity", cfg.colorOpacity.area_out); 
 
-			//Bring back the hovered over blob
-		d3.select("." + data[d][0].radar_area.replace(/\s+/g, ''))
+        //Bring back the hovered over blob
+		d3.select(".c" + data[d][0].radar_area.replace(/\s+/g, ''))
 			.transition().duration(200)
 			.style("fill-opacity", cfg.colorOpacity.area_over);	
 	}
