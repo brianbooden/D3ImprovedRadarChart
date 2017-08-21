@@ -102,6 +102,15 @@ define(["jquery", "./Library/d3-legend-new.min", "./Library/radarChart", "./Libr
 										}, {
 											value: "#AA4499, #882255, #AA4466, #CC6677, #661100, #DDCC77, #999933, #117733, #44AA99, #88CCEE, #6699CC, #332288",
 											label: "12 colors (Reverse)"
+										}, {
+											value: "#1ABC9C, #7F8C8D, #2ECC71, #BDC3C7, #3498DB, #C0392B, #9B59B6, #D35400, #34495E, #F39C12, #16A085, #95A5A6",
+											label: "Blue purple colors"
+										}, {
+											value: "#BE4FC0, #4477AA",
+											label: "2 colors"
+										}, {
+											value: "#4477AA, #BE4FC0",
+											label: "2 colors (Reverse)"
 										}
 									],
 										defaultValue: "#332288, #6699CC, #88CCEE, #44AA99, #117733, #999933, #DDCC77, #661100, #CC6677, #AA4466, #882255, #AA4499"
