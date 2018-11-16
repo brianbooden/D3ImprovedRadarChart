@@ -6,7 +6,7 @@ defaults: &defaults
     - image: circleci/node:stretch
   environment:
     GITHUB_ORG: "qlik-oss"
-    GITHUB_REPO: "br.com.clever.wordcloud"
+    GITHUB_REPO: "D3ImprovedRadarChart"
     PACKAGE_NAME: "qlik-radar-chart"
 
 jobs:

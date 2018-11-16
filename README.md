@@ -65,6 +65,4 @@ If you want to do code changes to the extension follow these simple steps to get
 
 # License
 
-Copyright © 2015 Brian Booden & Matthieu Burel
-
-Released under the MIT License
+Released under the [MIT License](LICENSE).
