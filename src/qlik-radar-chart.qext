@@ -1,16 +1,16 @@
 {
-	"name": "Radar",
+	"name": "Radar chart",
 	"description": "Qlik Sense Improved Radar Chart based on implementation by Nadieh Bremer, adapted to Qlik Sense by Brian Booden & Matthieu Burel",
 	"type": "visualization",
-	"version": "1.0.0",
+	"version": "X.Y.Z",
 	"icon": "extension",
-	"preview": "D3ImprovedRadarChart.png",
+	"preview": "qlik-radar-chart.png",
 	"author": "Nadieh Bremer, Brian Booden, Matthieu Burel",
 	"homepage": "",
 	"keywords": "qlik-sense, visualization",
 	"license": "MIT",
 	"repository": "",
 	"dependencies": {
-		"qlik-sense": ">=1.0.x"
+		"qlik-sense": ">=5.5.x"
 	}
 }
