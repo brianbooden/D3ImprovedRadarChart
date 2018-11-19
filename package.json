@@ -1,7 +1,7 @@
 {
   "name": "qlik-radar-chart",
   "version": "0.0.1",
-  "description": "Qlik Sense Extension Radar chart",
+  "description": "Show a measure spread on polar chart with two category dimensions, one for the axes and one for areas.",
   "keywords": "radar chart qliksense extension",
   "repository": "https://github.com/qlik-oss/D3ImprovedRadarChart",
   "author": "Brian Booden <brianbooden@users.noreply.github.com>, VizMatt <matthieu.burel@gmail.com>",
