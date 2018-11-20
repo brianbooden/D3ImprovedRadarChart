@@ -10,6 +10,18 @@ defaults: &defaults
     PACKAGE_NAME: "qlik-radar-chart"
 
 jobs:
+  test:
+    docker:
+    - image: circleci/node:stretch-browsers
+    steps:
+      - checkout
+      - run:
+          name: Install dependencies
+          command: npm install
+      - run:
+          name: Run tests
+          command: npm run test-once
+
   bump-version:
     <<: *defaults
     steps:
@@ -66,7 +78,10 @@ workflows:
   version: 2
   master_flow:
     jobs:
-      - bump-version
+      - test
+      - bump-version:
+          requires:
+            - test
       - build:
           requires:
             - bump-version
