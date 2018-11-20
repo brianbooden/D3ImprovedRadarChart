@@ -1,10 +1,10 @@
 {
 	"name": "Radar chart",
-	"description": "Qlik Sense Improved Radar Chart based on implementation by Nadieh Bremer, adapted to Qlik Sense by Brian Booden & Matthieu Burel",
+	"description": "Show a measure spread on polar chart with two category dimensions, one for the axes and one for areas.",
 	"type": "visualization",
 	"version": "X.Y.Z",
 	"icon": "extension",
-	"preview": "qlik-radar-chart.png",
+	"preview": "radar.png",
 	"author": "Nadieh Bremer, Brian Booden, Matthieu Burel",
 	"homepage": "",
 	"keywords": "qlik-sense, visualization",

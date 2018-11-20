@@ -24,6 +24,10 @@ gulp.task('add-src', function(){
   return gulp.src(srcFiles).pipe(gulp.dest(settings.buildDestination));
 });
 
+gulp.task('add-assets', function(){
+  return gulp.src("./assets/**/*").pipe(gulp.dest(settings.buildDestination));
+});
+
 gulp.task('webpack-build', done => {
   webpack(webpackConfig, (error, statistics) => {
     const compilationErrors = statistics && statistics.compilation.errors;
@@ -49,7 +53,7 @@ gulp.task('update-qext-version', function () {
 });
 
 gulp.task('build',
-  gulp.series('remove-build-folder', 'add-src', 'update-qext-version', 'zip-build')
+  gulp.series('remove-build-folder', 'add-src', 'update-qext-version', 'add-assets', 'zip-build')
 );
 
 gulp.task('default',
