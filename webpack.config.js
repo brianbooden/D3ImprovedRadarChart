@@ -52,9 +52,9 @@ const config = {
   },
   plugins: [
     new CopyWebpackPlugin([
-      'src/assets/' + settings.name + '.qext',
-      'src/assets/' + settings.name + '.png',
-      'src/assets/wbfolder.wbl'
+      'assets/' + settings.name + '.qext',
+      'assets/' + settings.name + '.png',
+      'assets/wbfolder.wbl'
     ], {}),
     new StyleLintPlugin()
   ]
