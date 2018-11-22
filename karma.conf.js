@@ -19,6 +19,14 @@ module.exports = (config) => {
     webpack: {
       devtool: 'source-map',
       mode: settings.mode,
+      externals: {
+        jquery: {
+          amd: 'jquery',
+          commonjs: 'jquery',
+          commonjs2: 'jquery',
+          root: '_'
+        },
+      },
       module: {
         rules: [
           {

@@ -7,7 +7,7 @@ console.log('Webpack mode:', settings.mode); // eslint-disable-line no-console
 const config = {
   devtool: 'source-map',
   entry: [
-    './src/' + settings.name + '.js'
+    './src/index.js'
   ],
   mode: settings.mode,
   output: {
@@ -15,12 +15,20 @@ const config = {
     filename: settings.name + '.js',
     libraryTarget: 'amd'
   },
+  externals: {
+    jquery: {
+      amd: 'jquery',
+      commonjs: 'jquery',
+      commonjs2: 'jquery',
+      root: '_'
+    },
+  },
   module: {
     rules: [
       {
         enforce: "pre",
         test: /\.js$/,
-        exclude: /node_modules/,
+        exclude: /(node_modules|Library)/,
         loader: "eslint-loader",
         options: {
           failOnError: true
@@ -44,8 +52,9 @@ const config = {
   },
   plugins: [
     new CopyWebpackPlugin([
-      'src/' + settings.name + '.qext',
-      'src/wbfolder.wbl'
+      'assets/' + settings.name + '.qext',
+      'assets/' + settings.name + '.png',
+      'assets/wbfolder.wbl'
     ], {}),
     new StyleLintPlugin()
   ]
