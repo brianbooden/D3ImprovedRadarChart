@@ -76,7 +76,9 @@ function displayRADAR(id, options, $element, layout, data, self) {
   }
   var svg = d3.select("#" + id).append("svg")
     .attr("width", cfg.size.width)
-    .attr("height", cfg.size.height);
+    .attr("height", cfg.size.height)
+    .classed("in-edit-mode", self._inEditState);
+    // .toggleClass("in-edit-mode", self._inEditState);
 
   //Append a g element
   var g = svg.append("g")
