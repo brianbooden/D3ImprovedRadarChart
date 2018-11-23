@@ -10,7 +10,7 @@ function paint ($element, layout) {
 
   var json = convertHYPERCUBEtoJSON(layout);
 
-  var colorpalette = layout.ColorSchema.split(", ");
+  var colorpalette = layout.ColorSchema;
 
   //////////////////////////////////////////////////////////////
   ////////////////////// Set-Up display ////////////////////////

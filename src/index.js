@@ -10,7 +10,20 @@
 // SOFTWARE.
 
 import paint from './paint';
-
+const COLOR_SCALES = Object.freeze({
+  SEQUENTIAL:           Object.freeze(["#FEE391", "#FEC44F", "#FE9929", "#EC7014", "#CC4C02", "#993404", "#662506"]),
+  SEQUENTIAL_REVERSE:   Object.freeze(["#662506", "#993404", "#CC4C02", "#EC7014", "#FE9929", "#FEC44F", "#FEE391"]),
+  DIVERGING_RDYLBU:     Object.freeze(["#D73027", "#F46D43", "#FEE090", "#ABD9E9", "#74ADD1", "#4575B4"]),
+  DIVERGING_BUYLRD:     Object.freeze(["#D73027", "#FDAE61", "#ABD9E9", "#4575B4"]),
+  BLUES:                Object.freeze(["#DEEBf7", "#C6DBEF", "#9ECAE1", "#6BAED6", "#4292C6", "#2171B5", "#08519C", "#08306B"]),
+  REDS:                 Object.freeze(["#FEE0D2", "#FCBBa1", "#FC9272", "#FB6A4A", "#EF3B2C", "#CB181D", "#A50F15", "#67000D"]),
+  YLGNBU:               Object.freeze(["#EDF8B1", "#C7E9B4", "#7FCDBB", "#41B6C4", "#1D91C0", "#225EA8", "#253494" ,"#081D58"]),
+  TWELVE_COLORS:        Object.freeze(["#332288", "#6699CC", "#88CCEE" ,"#44AA99", "#117733", "#999933", "#DDCC77", "#661100", "#CC6677", "#AA4466", "#882255", "#AA4499"]),
+  TWELVE_COLORS_REVERSE:Object.freeze(["#332288", "#6699CC", "#88CCEE" ,"#44AA99", "#117733", "#999933", "#DDCC77", "#661100", "#CC6677", "#AA4466", "#882255", "#AA4499"].reverse()),
+  BLUE_PURPLE:          Object.freeze(["#1ABC9C", "#7F8C8D", "#2ECC71", "#BDC3C7", "#3498DB", "#C0392B", "#9B59B6", "#D35400", "#34495E", "#F39C12", "#16A085", "#95A5A6"]),
+  TWO_COLORS:           Object.freeze(["#BE4FC0", "#4477AA"]),
+  TWO_COLORS_REVERSE:   Object.freeze(["#BE4FC0", "#4477AA"].reverse()),
+});
 export default {
   initialProperties: {
     qHyperCubeDef: {
@@ -81,49 +94,73 @@ export default {
               ColorSchema: {
                 ref: "ColorSchema",
                 type: "string",
-                component: "dropdown",
+                component: "item-selection-list",
                 label: "Color",
                 show: true,
-                options: [
+                defaultValue: COLOR_SCALES.TWELVE_COLORS,
+                items: [
                   {
-                    value: "#fee391, #fec44f, #fe9929, #ec7014, #cc4c02, #993404, #662506",
+                    component: "color-scale",
+                    colors: COLOR_SCALES.SEQUENTIAL,
+                    value: COLOR_SCALES.SEQUENTIAL,
                     label: "Sequential"
                   }, {
-                    value: "#662506, #993404, #cc4c02, #ec7014, #fe9929, #fec44f, #fee391",
+                    component: "color-scale",
+                    colors: COLOR_SCALES.SEQUENTIAL_REVERSE,
+                    value: COLOR_SCALES.SEQUENTIAL_REVERSE,
                     label: "Sequential (Reverse)"
                   }, {
-                    value: "#d73027, #f46d43, #fee090, #abd9e9, #74add1, #4575b4",
+                    component: "color-scale",
+                    colors: COLOR_SCALES.DIVERGING_RDYLBU,
+                    value: COLOR_SCALES.DIVERGING_RDYLBU,
                     label: "Diverging RdYlBu"
                   }, {
-                    value: "#4575b4, #74add1, #abd9e9, #fee090, #f46d43, #d73027",
-                    label: "Diverging BuYlRd (Reverse)"
+                    component: "color-scale",
+                    colors: COLOR_SCALES.DIVERGING_BUYLRD,
+                    value: COLOR_SCALES.DIVERGING_BUYLRD,
+                    label: "Diverging BuYlRd"
                   }, {
-                    value: "#deebf7, #c6dbef, #9ecae1, #6baed6, #4292c6, #2171b5, #08519c, #08306b",
+                    component: "color-scale",
+                    colors: COLOR_SCALES.BLUES,
+                    value: COLOR_SCALES.BLUES,
                     label: "Blues"
                   }, {
-                    value: "#fee0d2, #fcbba1, #fc9272, #fb6a4a, #ef3b2c, #cb181d, #a50f15, #67000d",
+                    component: "color-scale",
+                    colors: COLOR_SCALES.REDS,
+                    value: COLOR_SCALES.REDS,
                     label: "Reds"
                   }, {
-                    value: "#edf8b1, #c7e9b4, #7fcdbb, #41b6c4, #1d91c0, #225ea8, #253494, #081d58",
+                    component: "color-scale",
+                    colors: COLOR_SCALES.YLGNBU,
+                    value: COLOR_SCALES.YLGNBU,
                     label: "YlGnBu"
                   }, {
-                    value: "#332288, #6699CC, #88CCEE, #44AA99, #117733, #999933, #DDCC77, #661100, #CC6677, #AA4466, #882255, #AA4499",
+                    component: "color-scale",
+                    colors: COLOR_SCALES.TWELVE_COLORS,
+                    value: COLOR_SCALES.TWELVE_COLORS,
                     label: "12 colors"
                   }, {
-                    value: "#AA4499, #882255, #AA4466, #CC6677, #661100, #DDCC77, #999933, #117733, #44AA99, #88CCEE, #6699CC, #332288",
+                    component: "color-scale",
+                    colors: COLOR_SCALES.TWELVE_COLORS_REVERSE,
+                    value: COLOR_SCALES.TWELVE_COLORS_REVERSE,
                     label: "12 colors (Reverse)"
                   }, {
-                    value: "#1ABC9C, #7F8C8D, #2ECC71, #BDC3C7, #3498DB, #C0392B, #9B59B6, #D35400, #34495E, #F39C12, #16A085, #95A5A6",
+                    component: "color-scale",
+                    colors: COLOR_SCALES.BLUE_PURPLE,
+                    value: COLOR_SCALES.BLUE_PURPLE,
                     label: "Blue purple colors"
                   }, {
-                    value: "#BE4FC0, #4477AA",
+                    component: "color-scale",
+                    colors: COLOR_SCALES.TWO_COLORS,
+                    value: COLOR_SCALES.TWO_COLORS,
                     label: "2 colors"
                   }, {
-                    value: "#4477AA, #BE4FC0",
+                    component: "color-scale",
+                    colors: COLOR_SCALES.TWO_COLORS_REVERSE,
+                    value: COLOR_SCALES.TWO_COLORS_REVERSE,
                     label: "2 colors (Reverse)"
                   }
-                ],
-                defaultValue: "#332288, #6699CC, #88CCEE, #44AA99, #117733, #999933, #DDCC77, #661100, #CC6677, #AA4466, #882255, #AA4499"
+                ]
               }
             }
           }
