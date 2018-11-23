@@ -20,9 +20,7 @@ const COLOR_SCALES = Object.freeze({
   YLGNBU:               Object.freeze(["#EDF8B1", "#C7E9B4", "#7FCDBB", "#41B6C4", "#1D91C0", "#225EA8", "#253494" ,"#081D58"]),
   TWELVE_COLORS:        Object.freeze(["#332288", "#6699CC", "#88CCEE" ,"#44AA99", "#117733", "#999933", "#DDCC77", "#661100", "#CC6677", "#AA4466", "#882255", "#AA4499"]),
   TWELVE_COLORS_REVERSE:Object.freeze(["#332288", "#6699CC", "#88CCEE" ,"#44AA99", "#117733", "#999933", "#DDCC77", "#661100", "#CC6677", "#AA4466", "#882255", "#AA4499"].reverse()),
-  BLUE_PURPLE:          Object.freeze(["#1ABC9C", "#7F8C8D", "#2ECC71", "#BDC3C7", "#3498DB", "#C0392B", "#9B59B6", "#D35400", "#34495E", "#F39C12", "#16A085", "#95A5A6"]),
-  TWO_COLORS:           Object.freeze(["#BE4FC0", "#4477AA"]),
-  TWO_COLORS_REVERSE:   Object.freeze(["#BE4FC0", "#4477AA"].reverse()),
+  BLUE_PURPLE:          Object.freeze(["#1ABC9C", "#7F8C8D", "#2ECC71", "#BDC3C7", "#3498DB", "#C0392B", "#9B59B6", "#D35400", "#34495E", "#F39C12", "#16A085", "#95A5A6"])
 });
 export default {
   initialProperties: {
@@ -149,16 +147,6 @@ export default {
                     colors: COLOR_SCALES.BLUE_PURPLE,
                     value: COLOR_SCALES.BLUE_PURPLE,
                     label: "Blue purple colors"
-                  }, {
-                    component: "color-scale",
-                    colors: COLOR_SCALES.TWO_COLORS,
-                    value: COLOR_SCALES.TWO_COLORS,
-                    label: "2 colors"
-                  }, {
-                    component: "color-scale",
-                    colors: COLOR_SCALES.TWO_COLORS_REVERSE,
-                    value: COLOR_SCALES.TWO_COLORS_REVERSE,
-                    label: "2 colors (Reverse)"
                   }
                 ]
               }
