@@ -349,25 +349,29 @@ function displayRADAR(id, options, $element, layout, data, self) {
   /////////////////// Draw the Legend /////////////////////
   /////////////////////////////////////////////////////////
 
-  svg.append("g")
-    .attr("class", "legendOrdinal")
-    .attr("transform", "translate(" + cfg["legendPosition"]["x"] + "," + cfg["legendPosition"]["y"] + ")");
+  if(cfg.size.width / cfg.size.height < 1.5 && cfg.size.height < 380){
+    return;
+  }else{
+    svg.append("g")
+      .attr("class", "legendOrdinal")
+      .attr("transform", "translate(" + cfg["legendPosition"]["x"] + "," + cfg["legendPosition"]["y"] + ")");
 
-  var legendOrdinal = d3.legend.color()
-    .shape("path", d3.svg.symbol().type("circle").size(40)())
-    .shapePadding(10)
-    .scale(cfg.color)
-    .labels(cfg.color.domain().map(function(d){
-      return data[d][0].radar_area;
-      //			return data[d][0].radar_area + " - " + data[d][0].radar_area_id;
-    }))
-    .on("cellover", function(d){ cellover(d); })
-    .on("cellclick", function (d){ cellclick(d); })
-    .on("cellout", function(){ cellout(); });
+    var legendOrdinal = d3.legend.color()
+      .shape("path", d3.svg.symbol().type("circle").size(40)())
+      .shapePadding(10)
+      .scale(cfg.color)
+      .labels(cfg.color.domain().map(function(d){
+        return data[d][0].radar_area;
+        //			return data[d][0].radar_area + " - " + data[d][0].radar_area_id;
+      }))
+      .on("cellover", function(d){ cellover(d); })
+      .on("cellclick", function (d){ cellclick(d); })
+      .on("cellout", function(){ cellout(); });
 
-  if((layout.qHyperCube.qDimensionInfo.length !== 1) && (cfg.legendDisplay == true)){
-    svg.select(".legendOrdinal")
-      .call(legendOrdinal);
+    if((layout.qHyperCube.qDimensionInfo.length !== 1) && (cfg.legendDisplay == true)){
+      svg.select(".legendOrdinal")
+        .call(legendOrdinal);
+    }
   }
 
   /*
