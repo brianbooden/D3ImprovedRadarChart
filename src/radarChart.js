@@ -78,7 +78,6 @@ function displayRADAR(id, options, $element, layout, data, self) {
     .attr("width", cfg.size.width)
     .attr("height", cfg.size.height)
     .classed("in-edit-mode", self._inEditState);
-    // .toggleClass("in-edit-mode", self._inEditState);
 
   //Append a g element
   var g = svg.append("g")
