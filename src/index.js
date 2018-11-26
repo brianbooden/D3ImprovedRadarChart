@@ -10,6 +10,8 @@
 // SOFTWARE.
 
 import paint from './paint';
+
+/* eslint-disable max-len */
 const COLOR_SCALES = Object.freeze({
   SEQUENTIAL:           Object.freeze(["#FEE391", "#FEC44F", "#FE9929", "#EC7014", "#CC4C02", "#993404", "#662506"]),
   SEQUENTIAL_REVERSE:   Object.freeze(["#662506", "#993404", "#CC4C02", "#EC7014", "#FE9929", "#FEC44F", "#FEE391"]),
@@ -22,6 +24,8 @@ const COLOR_SCALES = Object.freeze({
   TWELVE_COLORS_REVERSE:Object.freeze(["#332288", "#6699CC", "#88CCEE" ,"#44AA99", "#117733", "#999933", "#DDCC77", "#661100", "#CC6677", "#AA4466", "#882255", "#AA4499"].reverse()),
   BLUE_PURPLE:          Object.freeze(["#1ABC9C", "#7F8C8D", "#2ECC71", "#BDC3C7", "#3498DB", "#C0392B", "#9B59B6", "#D35400", "#34495E", "#F39C12", "#16A085", "#95A5A6"])
 });
+/* eslint-enable max-len */
+
 export default {
   initialProperties: {
     qHyperCubeDef: {
