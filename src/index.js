@@ -39,7 +39,7 @@ export default {
       data: {
         uses: "data",
         items: {
-          dimensions:{
+          dimensions: {
             disabledRef: ""
           },
           measures: {
@@ -50,19 +50,19 @@ export default {
       sorting: {
         uses: "sorting"
       },
-      settings : {
-        uses : "settings",
-        items : {
+      settings: {
+        uses: "settings",
+        items: {
           design: {
             label: "Design",
             type: "items",
             items: {
-              Line:{
+              Line: {
                 ref: "strokeStyle",
                 component: "dropdown",
                 type: "boolean",
                 label: "Stroke type",
-                defaultValue:  true,
+                defaultValue: true,
                 options: [{
                   value: true,
                   label: "Smooth"
@@ -72,7 +72,7 @@ export default {
                 }],
                 show: true
               },
-              Legend:{
+              Legend: {
                 ref: "showLegend",
                 component: "switch",
                 type: "boolean",
@@ -92,7 +92,7 @@ export default {
 
                 type: "items",
                 label: "Colors",
-                items : {
+                items: {
                   ColorSchema: {
                     ref: "ColorSchema",
                     type: "string",
