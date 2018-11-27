@@ -362,7 +362,6 @@ function displayRADAR(id, options, $element, layout, data, self) {
       .scale(cfg.color)
       .labels(cfg.color.domain().map(function(d){
         return data[d][0].radar_area;
-        //			return data[d][0].radar_area + " - " + data[d][0].radar_area_id;
       }))
       .on("cellover", function(d){ cellover(d); })
       .on("cellclick", function (d){ cellclick(d); })
