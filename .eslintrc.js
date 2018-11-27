@@ -27,7 +27,7 @@ module.exports = {
     "linebreak-style": ["error", "unix"],
     "object-curly-spacing": ["error", "always"],
     "max-lines": ["warn", 300],
-    "max-len": ["warn", 120],
+    "max-len": ["warn", { "code": 120, "ignoreComments": true, "ignoreTrailingComments": false }],
     "no-console": ["warn"],
     "no-mixed-operators": ["warn", {
       "groups": [
