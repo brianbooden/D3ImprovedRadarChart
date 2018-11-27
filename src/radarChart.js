@@ -76,7 +76,8 @@ function displayRADAR(id, options, $element, layout, data, self) {
   }
   var svg = d3.select("#" + id).append("svg")
     .attr("width", cfg.size.width)
-    .attr("height", cfg.size.height);
+    .attr("height", cfg.size.height)
+    .classed("in-edit-mode", self._inEditState);
 
   //Append a g element
   var g = svg.append("g")
@@ -254,20 +255,24 @@ function displayRADAR(id, options, $element, layout, data, self) {
     .style("fill", "none")
     .style("pointer-events", "all")
     .on("mouseover", function(d) {
-      const newX = parseFloat(d3.select(this).attr('cx')) - 10;
-      const newY = parseFloat(d3.select(this).attr('cy')) - 10;
+      if (!self._inEditState){ /// adding a css class to the parent SVG to prevent pointer events on edit mode was'nt enough for this interaction
+        const newX = parseFloat(d3.select(this).attr('cx')) - 10;
+        const newY = parseFloat(d3.select(this).attr('cy')) - 10;
 
-      // Tooltip to show value on circle mouseover
-      tooltip
-        .attr('x', newX)
-        .attr('y', newY)
-        .text(d.radar_area + " : " + format(options.numberFormat[0], d.value*options.numberFormat[1]) + options.numberFormat[2])
-        .transition().duration(200)
-        .style('opacity', 1);
+        // Tooltip to show value on circle mouseover
+        tooltip
+          .attr('x', newX)
+          .attr('y', newY)
+          .text(d.radar_area + " : " + format(options.numberFormat[0], d.value*options.numberFormat[1]) + options.numberFormat[2])
+          .transition().duration(200)
+          .style('opacity', 1);
+      }
     })
     .on("mouseout", function(){
-      tooltip.transition().duration(200)
-        .style("opacity", 0);
+      if(!self._inEditState){
+        tooltip.transition().duration(200)
+          .style("opacity", 0);
+      }
     });
 
   //Set up the small tooltip for when you hover over a circle

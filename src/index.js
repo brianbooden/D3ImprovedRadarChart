@@ -10,6 +10,7 @@
 // SOFTWARE.
 
 import paint from './paint';
+import './styles.less';
 
 export default {
   initialProperties: {
