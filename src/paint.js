@@ -1,5 +1,5 @@
 import $ from 'jquery';
-import d3 from './Library/d3.min';
+import d3 from 'd3';
 import displayRADAR from './radarChart';
 
 function paint ($element, layout) {
@@ -7,7 +7,6 @@ function paint ($element, layout) {
   //////////////////////////////////////////////////////////////
   ////////////////////////// Data //////////////////////////////
   //////////////////////////////////////////////////////////////
-
   var json = convertHYPERCUBEtoJSON(layout);
 
   var colorpalette = layout.ColorSchema;

@@ -10,6 +10,7 @@
 // SOFTWARE.
 
 import paint from './paint';
+import './styles.less';
 
 /* eslint-disable max-len */
 const COLOR_SCALES = Object.freeze({
@@ -37,63 +38,78 @@ export default {
       }]
     }
   },
+  data: {
+    dimensions: {
+      min: 2,
+      max: 2
+    },
+    measures: {
+      min: 1,
+      max: 1
+    }
+  },
+  support: {
+    snapshot: true,
+    export: true,
+    exportData: true
+  },
   definition: {
     type: "items",
     component: "accordion",
     items: {
-      dimensions: {
-        uses: "dimensions",
-        min: 2,
-        max: 2
-      },
-      measures: {
-        uses: "measures",
-        min: 1,
-        max: 1
+      data: {
+        uses: "data",
+        items: {
+          dimensions: {
+            disabledRef: ""
+          },
+          measures: {
+            disabledRef: ""
+          }
+        }
       },
       sorting: {
         uses: "sorting"
       },
-      settings : {
-        uses : "settings",
-        items : {
-          Line:{
-            ref: "strokeStyle",
-            component: "dropdown",
-            type: "boolean",
-            label: "Stroke type",
-            defaultValue:  true,
-            options: [{
-              value: true,
-              label: "Smooth"
-            }, {
-              value: false,
-              label: "Straight"
-            }],
-            show: true
-          },
-          Legend:{
-            ref: "showLegend",
-            component: "switch",
-            type: "boolean",
-            translation: "Legend",
-            defaultValue: true,
-            trueOption: {
-              value: true,
-              translation: "properties.on"
-            },
-            falseOption: {
-              value: false,
-              translation: "properties.off"
-            },
-            show: true
-          },
-          colors: {
-
+      settings: {
+        uses: "settings",
+        items: {
+          design: {
+            label: "Design",
             type: "items",
-            label: "Colors",
-            items : {
-              ColorSchema: {
+            items: {
+              Line: {
+                ref: "strokeStyle",
+                component: "dropdown",
+                type: "boolean",
+                label: "Stroke type",
+                defaultValue: true,
+                options: [{
+                  value: true,
+                  label: "Smooth"
+                }, {
+                  value: false,
+                  label: "Straight"
+                }],
+                show: true
+              },
+              Legend: {
+                ref: "showLegend",
+                component: "switch",
+                type: "boolean",
+                translation: "Legend",
+                defaultValue: true,
+                trueOption: {
+                  value: true,
+                  translation: "properties.on"
+                },
+                falseOption: {
+                  value: false,
+                  translation: "properties.off"
+                },
+                show: true
+              },
+              colors: {
                 ref: "ColorSchema",
                 type: "string",
                 component: "item-selection-list",
