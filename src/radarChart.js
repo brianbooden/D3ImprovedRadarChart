@@ -6,8 +6,8 @@
 // Adapted to Qlik Sense by Brian Booden & Matthieu Burel //
 ////////////////////////////////////////////////////////////
 import $ from 'jquery';
-import d3 from './Library/d3.min';
-import './Library/d3-legend.min';
+import d3 from 'd3';
+import 'd3-svg-legend';
 
 function displayRADAR(id, options, $element, layout, data, self) {
   var cfg = {

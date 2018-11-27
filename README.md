@@ -3,6 +3,7 @@
 
 Developed by Brian Booden & Matthieu Burel, based on D3.js
 
+[![CircleCI](https://circleci.com/gh/qlik-oss/D3ImprovedRadarChart.svg?style=svg)](https://circleci.com/gh/qlik-oss/D3ImprovedRadarChart)
 
 # Update 05/10/2016
 

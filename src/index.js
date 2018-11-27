@@ -32,6 +32,11 @@ export default {
       max: 1
     }
   },
+  support: {
+    snapshot: true,
+    export: true,
+    exportData: true
+  },
   definition: {
     type: "items",
     component: "accordion",
