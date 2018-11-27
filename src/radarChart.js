@@ -348,8 +348,8 @@ function displayRADAR(id, options, $element, layout, data, self) {
   /////////////////////////////////////////////////////////
   /////////////////// Draw the Legend /////////////////////
   /////////////////////////////////////////////////////////
-
-  if(cfg.size.width / cfg.size.height < 1.5 && cfg.size.height < 380){
+  var aspectRatio = cfg.size.width / cfg.size.height;
+  if(aspectRatio < 1.5 && cfg.size.height < 380){
     return;
   }else{
     svg.append("g")
