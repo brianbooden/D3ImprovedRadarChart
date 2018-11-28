@@ -1,9 +1,9 @@
 {
 	"name": "Radar chart",
-	"description": "Show a measure spread on polar chart with two category dimensions, one for the axes and one for areas.",
+	"description": "A two-dimensional chart using radial axes to show the scoring of a measure in one dimension over another.",
 	"type": "visualization",
 	"version": "X.Y.Z",
-	"icon": "extension",
+	"icon": "auto-layout",
 	"preview": "radar.png",
 	"author": "Nadieh Bremer, Brian Booden, Matthieu Burel",
 	"homepage": "",
