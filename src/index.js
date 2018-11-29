@@ -23,7 +23,8 @@ const COLOR_SCALES = Object.freeze({
   YLGNBU:               Object.freeze(["#EDF8B1", "#C7E9B4", "#7FCDBB", "#41B6C4", "#1D91C0", "#225EA8", "#253494" ,"#081D58"]),
   TWELVE_COLORS:        Object.freeze(["#332288", "#6699CC", "#88CCEE" ,"#44AA99", "#117733", "#999933", "#DDCC77", "#661100", "#CC6677", "#AA4466", "#882255", "#AA4499"]),
   TWELVE_COLORS_REVERSE:Object.freeze(["#332288", "#6699CC", "#88CCEE" ,"#44AA99", "#117733", "#999933", "#DDCC77", "#661100", "#CC6677", "#AA4466", "#882255", "#AA4499"].reverse()),
-  BLUE_PURPLE:          Object.freeze(["#1ABC9C", "#7F8C8D", "#2ECC71", "#BDC3C7", "#3498DB", "#C0392B", "#9B59B6", "#D35400", "#34495E", "#F39C12", "#16A085", "#95A5A6"])
+  BLUE_PURPLE:          Object.freeze(["#1ABC9C", "#7F8C8D", "#2ECC71", "#BDC3C7", "#3498DB", "#C0392B", "#9B59B6", "#D35400", "#34495E", "#F39C12", "#16A085", "#95A5A6"]),
+  BREEZE:               Object.freeze([ "#138185", "#26A0A7", "#65D3DA", "#79D69F", "#70BA6E", "#CBE989", "#EBF898", "#F9EC86", "#FAD144", "#EC983D", "#D76C6C", "#A54343" ])
 });
 /* eslint-enable max-len */
 
@@ -117,7 +118,7 @@ export default {
                 show: true,
                 defaultValue: COLOR_SCALES.TWELVE_COLORS,
                 items: [
-                  {
+                  /*{
                     component: "color-scale",
                     colors: COLOR_SCALES.SEQUENTIAL,
                     value: COLOR_SCALES.SEQUENTIAL,
@@ -152,7 +153,7 @@ export default {
                     colors: COLOR_SCALES.YLGNBU,
                     value: COLOR_SCALES.YLGNBU,
                     label: "YlGnBu"
-                  }, {
+                  },*/ {
                     component: "color-scale",
                     colors: COLOR_SCALES.TWELVE_COLORS,
                     value: COLOR_SCALES.TWELVE_COLORS,
@@ -167,6 +168,11 @@ export default {
                     colors: COLOR_SCALES.BLUE_PURPLE,
                     value: COLOR_SCALES.BLUE_PURPLE,
                     label: "Blue purple colors"
+                  }, {
+                    component: "color-scale",
+                    colors: COLOR_SCALES.BREEZE,
+                    value: COLOR_SCALES.BREEZE,
+                    label: "Breeze theme colors"
                   }
                 ]
               }
