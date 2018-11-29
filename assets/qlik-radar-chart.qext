@@ -4,7 +4,7 @@
 	"type": "visualization",
 	"version": "X.Y.Z",
 	"icon": "auto-layout",
-	"preview": "radar.png",
+	"preview": "qlik-radar-chart.png",
 	"author": "Nadieh Bremer, Brian Booden, Matthieu Burel",
 	"homepage": "",
 	"keywords": "qlik-sense, visualization",
